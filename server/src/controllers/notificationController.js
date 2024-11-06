@@ -1,7 +1,7 @@
 const notificationModel = require("../models/notificationModel");
 const { createdAt } = require("../utils/formattedTime");
 const date = require("date-and-time");
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 
 const addNotification = async ({ document_id, content, user_id }) => {
   try {

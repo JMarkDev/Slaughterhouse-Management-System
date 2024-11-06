@@ -1,7 +1,7 @@
 const userModel = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const saltsRounds = 10;
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 require("dotenv").config();
 const fs = require("fs");
 const date = require("date-and-time");
@@ -17,6 +17,7 @@ const handleRegister = async (req, res) => {
     middleInitial,
     email,
     contactNumber,
+    address,
     role,
     password,
   } = req.body;
@@ -70,6 +71,7 @@ const handleRegister = async (req, res) => {
       email,
       contactNumber,
       role,
+      address,
       status: statusList.pending,
       password: hashPassword,
       createdAt: sequelize.literal(`'${formattedDate}'`),

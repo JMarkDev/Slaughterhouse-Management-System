@@ -8,12 +8,13 @@ const {
   validateForm,
   updateProfileValidation,
 } = require("../middlewares/formValidation");
+const otpController = require("../controllers/otpController");
 
 // req.query
 //http://localhost:3001/users/get-user?email=jmseroy@gmail.com
 router.get("/get-user", userController.getUserByEmail);
 router.get("/get-user-by-id/:id", userController.getUserById);
-router.get("/get-all-user", userController.getAllUser);
+router.get("/get-all-user", userController.getAllUserByRole);
 
 router.get("/get-user-by-role", userController.getUserByRole);
 router.delete("/delete/id/:id", userController.deleteUser);
@@ -40,5 +41,8 @@ router.put(
   validateForm,
   userController.updateProfile
 );
+
+router.post("/update-email", userController.updateEmail);
+router.put("/update-email/verify-otp/:id", otpController.verifyChangeEmail);
 
 module.exports = router;

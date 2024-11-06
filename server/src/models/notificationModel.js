@@ -1,4 +1,4 @@
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 const { DataTypes } = require("sequelize");
 const User = require("./userModel");
 
@@ -11,22 +11,34 @@ const Notification = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
-    document_id: {
+    transactionId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
+      references: {
+        model: "transactions",
+        key: "id",
+      },
+    },
+    message: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    ownerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "owners",
+        key: "id",
+      },
     },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: User,
+        model: "users",
         key: "id",
       },
       onDelete: "CASCADE",
-    },
-    content: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
     },
     is_read: {
       type: DataTypes.TINYINT(0),
@@ -42,6 +54,7 @@ const Notification = sequelize.define(
       allowNull: true,
     },
   },
+
   {
     timestamps: false,
   }

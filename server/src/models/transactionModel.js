@@ -1,8 +1,8 @@
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 const { DataTypes } = require("sequelize");
-const animalModel = require("./animalModel");
-const ownerModel = require("./ownerModel");
-const userModel = require("./userModel");
+// const animalModel = require("./animalModel");
+// const ownerModel = require("./ownerModel");
+// const userModel = require("./userModel");
 
 const Transaction = sequelize.define(
   "transactions",
@@ -11,10 +11,6 @@ const Transaction = sequelize.define(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-    },
-    amountDue: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
     },
     amountPaid: {
       type: DataTypes.DECIMAL(10, 2),
@@ -36,30 +32,6 @@ const Transaction = sequelize.define(
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-    },
-    animalId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: animalModel,
-        key: "id",
-      },
-    },
-    ownerId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: ownerModel,
-        key: "id",
-      },
-    },
-    slaughterhouseId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: userModel,
-        key: "id",
-      },
     },
   },
   {

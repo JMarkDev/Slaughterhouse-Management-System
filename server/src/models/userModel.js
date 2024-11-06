@@ -1,5 +1,6 @@
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 const { DataTypes } = require("sequelize");
+const Animal = require("./animalModel");
 
 const User = sequelize.define(
   "users",
@@ -33,6 +34,10 @@ const User = sequelize.define(
       type: DataTypes.STRING(20),
       allowNull: false,
     },
+    address: {
+      type: DataTypes.STRING(455),
+      allowNull: false,
+    },
     role: {
       type: DataTypes.TINYINT(1),
       allowNull: false,
@@ -54,10 +59,17 @@ const User = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    // slaughterhouseId: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false,
+    // },
   },
   {
     timestamps: false,
   }
 );
+
+User.hasMany(Animal, { foreignKey: "slaughterhouseId" });
+Animal.belongsTo(User, { foreignKey: "slaughterhouseId" });
 
 module.exports = User;

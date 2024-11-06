@@ -1,6 +1,5 @@
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 const { DataTypes } = require("sequelize");
-const Animal = require("./animalModel");
 
 const Owner = sequelize.define("owners", {
   id: {
@@ -25,17 +24,18 @@ const Owner = sequelize.define("owners", {
     allowNull: false,
     defaultValue: DataTypes.NOW,
   },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
   animalId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Animal,
+      model: "animals",
       key: "id",
     },
   },
 });
-
-Owner.hasMany(Animal, { foreignKey: "ownerId", onDelete: "CASCADE" });
-Animal.belongsTo(Owner, { foreignKey: "ownerId", onDelete: "CASCADE" });
 
 module.exports = Owner;

@@ -3,9 +3,9 @@ const { DataTypes } = require("sequelize");
 
 const Owner = sequelize.define("owners", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(55),
     primaryKey: true,
-    autoIncrement: true,
+    // autoIncrement: true,
   },
   customerName: {
     type: DataTypes.STRING,
@@ -29,7 +29,7 @@ const Owner = sequelize.define("owners", {
     allowNull: true,
   },
   animalId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(55),
     allowNull: false,
     references: {
       model: "animals",

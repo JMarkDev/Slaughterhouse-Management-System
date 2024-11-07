@@ -8,9 +8,9 @@ const Transaction = sequelize.define(
   "transactions",
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(55),
       primaryKey: true,
-      autoIncrement: true,
+      // autoIncrement: true,
     },
     amountPaid: {
       type: DataTypes.DECIMAL(10, 2),

@@ -1,4 +1,4 @@
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
 const date = require("date-and-time");
 
 // Get the current date and time

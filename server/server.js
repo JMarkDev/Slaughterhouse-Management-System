@@ -1,5 +1,5 @@
 const express = require("express");
-const database = require("./src/configs/database");
+const database = require("./src/config/database");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { Server } = require("socket.io");
@@ -11,6 +11,7 @@ const refreshToken = require("./src/middlewares/refreshToken");
 const authRoute = require("./src/routes/authRoute");
 const userRoute = require("./src/routes/userRoute");
 const notificationRoute = require("./src/routes/notificationRoute");
+const animalRoute = require("./src/routes/animalRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +60,7 @@ app.use(verifyToken);
 
 app.use("/users", userRoute);
 app.use("/notification", notificationRoute);
+app.use("/animals", animalRoute);
 
 app.get("/");
 // Server setup

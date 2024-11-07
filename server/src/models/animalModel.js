@@ -7,9 +7,9 @@ const Animal = sequelize.define(
   "animals",
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(55),
       primaryKey: true,
-      autoIncrement: true,
+      // autoIncrement: true,
     },
     type: {
       type: DataTypes.STRING,
@@ -46,13 +46,6 @@ const Animal = sequelize.define(
         key: "id",
       },
     },
-    // ownerId: {
-    //   type: DataTypes.INTEGER,
-    //   references: {
-    //     model: "owners",
-    //     key: "id",
-    //   },
-    // },
     transactionId: {
       type: DataTypes.STRING(55),
       allowNull: false,

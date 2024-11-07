@@ -12,24 +12,16 @@ const Notification = sequelize.define(
       allowNull: false,
     },
     transactionId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(55),
       allowNull: false,
-      references: {
-        model: "transactions",
-        key: "id",
-      },
     },
     message: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    ownerId: {
-      type: DataTypes.INTEGER,
+    ownerName: {
+      type: DataTypes.STRING(55),
       allowNull: false,
-      references: {
-        model: "owners",
-        key: "id",
-      },
     },
     user_id: {
       type: DataTypes.INTEGER,

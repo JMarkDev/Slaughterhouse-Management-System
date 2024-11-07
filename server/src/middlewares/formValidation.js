@@ -88,6 +88,23 @@ const registerValidationRules = () => {
   ];
 };
 
+const addAnimalValidation = () => {
+  return [
+    validateRequiredField("customerName"),
+    validateRequiredField("customerPhone"),
+    validateRequiredField("customerAddress"),
+    validateRequiredField("type"),
+    validateRequiredField("weight"),
+    validateRequiredField("pricePerKg"),
+    validateRequiredField("total"),
+    validateRequiredField("slaughterDate"),
+    validateRequiredField("slaughterhouseId"),
+    validateRequiredField("paidAmount"),
+    validateRequiredField("balance"),
+    validateRequiredField("status"),
+  ];
+};
+
 const updateProfileValidation = () => {
   return [
     validateRequiredField("firstName"),
@@ -115,4 +132,5 @@ module.exports = {
   validateEmail,
   validateForgotPassword,
   updateProfileValidation,
+  addAnimalValidation,
 };

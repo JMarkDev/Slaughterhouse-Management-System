@@ -1,34 +1,106 @@
 const animalModel = require("../models/animalModel");
-const ownerModel = require("../models/ownerModel");
 const date = require("date-and-time");
-const sequelize = require("../configs/database");
+const sequelize = require("../config/database");
+const { Op } = require("sequelize");
+const ownerModel = require("../models/ownerModel");
+const transactionModel = require("../models/transactionModel");
 
 const addAnimal = async (req, res) => {
   const {
-    type,
-    weight,
-    pricePerKg,
-    date,
-    total,
     customerName,
     customerPhone,
     customerAddress,
+    type,
+    weight,
+    pricePerKg,
+    total,
+    paidAmount,
+    balance,
+    status,
+    slaughterDate,
+    slaughterhouseId,
   } = req.body;
 
   try {
     const createdAt = new Date();
     const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss");
 
-    const newAnimal = await animalModel.create({
-      type,
-      weight,
-      pricePerKg,
-      total,
-      date: date,
+    const year = new Date().getFullYear().toString().slice(-2); // Last two digits of the year
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let transaction = "";
+
+    // Generate an 8-character random string
+    for (let i = 8; i > 0; --i) {
+      transaction += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    // Add the last two digits of the year and a 2-digit timestamp for uniqueness
+    const timestamp = Date.now().toString().slice(-2); // Last two digits of the milliseconds
+
+    transaction = `${transaction}${timestamp}${year}`; // Total 12 characters
+
+    const newTransaction = await transactionModel.create({
+      id: transaction,
+      transactionId: transaction,
+      amountPaid: paidAmount,
+      balance: balance,
+      status: status,
       createdAt: sequelize.literal(`'${formattedDate}'`),
     });
 
-    return res.status(201).json(newAnimal);
+    const newAnimal = await animalModel.create({
+      id: transaction,
+      type: type,
+      weight: weight,
+      pricePerKg: pricePerKg,
+      total: total,
+      slaughterDate: slaughterDate,
+      slaughterhouseId: slaughterhouseId,
+      transactionId: transaction,
+      createdAt: sequelize.literal(`'${formattedDate}'`),
+    });
+
+    const newOwner = await ownerModel.create({
+      id: newAnimal.id,
+      customerName,
+      customerPhone,
+      customerAddress,
+      animalId: newAnimal.id,
+      createdAt: sequelize.literal(`'${formattedDate}'`),
+    });
+
+    return res.status(201).json({
+      newAnimal,
+      newTransaction,
+      newOwner,
+      status: "success",
+      message: "Added successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const fetchAllAnimals = async (req, res) => {
+  try {
+    const animals = await animalModel.findAll(
+      {
+        include: [
+          {
+            model: ownerModel,
+            required: true,
+          },
+          {
+            model: transactionModel,
+            required: true,
+          },
+        ],
+      }
+      // { raw: true }
+    );
+    return res.status(200).json(animals);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -41,8 +113,257 @@ const getAnimalById = async (req, res) => {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
     });
+
     return res.status(200).json(animal);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteAnimal = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const animal = await animalModel.destroy({
+      where: {
+        id: id,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
+    });
+    return res.status(200).json({ animal, message: "Deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getAnimalTypeBySlaughterhouse = async (req, res) => {
+  const { type, slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        type: type,
+        slaughterhouseId: slaughterhouseId,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getAnimalTypeByAdmin = async (req, res) => {
+  const { type } = req.params;
+
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        type: type,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const updateAnimal = async (req, res) => {
+  const { id } = req.params;
+  const { type, weight, pricePerKg, dateSlaughtered, total } = req.body;
+
+  try {
+    const animal = await animalModel.update(
+      {
+        type: type,
+        weight: weight,
+        pricePerKg: pricePerKg,
+        date: dateSlaughtered,
+        total: total,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+
+    return res.status(200).json({ animal, message: "Updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const searchAnimals = async (req, res) => {
+  const { name, type, slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        type: type,
+        slaughterhouseId: slaughterhouseId,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+          where: {
+            [Op.or]: [
+              {
+                customerName: {
+                  [Op.like]: `${name}%`,
+                },
+              },
+              {
+                customerPhone: {
+                  [Op.like]: `${name}%`,
+                },
+              },
+              {
+                customerAddress: {
+                  [Op.like]: `${name}%`,
+                },
+              },
+            ],
+          },
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getAnimalsBySlaughterhouse = async (req, res) => {
+  const { slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        slaughterhouseId: slaughterhouseId,
+      },
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const filterByStatus = async (req, res) => {
+  const { status, slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        slaughterhouseId: slaughterhouseId,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+          where: {
+            status: status,
+          },
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getTransactionBySlaughterhouse = async (req, res) => {
+  const { slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        slaughterhouseId: slaughterhouseId,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const filterByDateRange = async (req, res) => {
+  const { startDate, endDate, slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        },
+        slaughterhouseId: slaughterhouseId,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+        },
+      ],
+    });
+    return res.status(200).json(animals);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -51,4 +372,14 @@ const getAnimalById = async (req, res) => {
 module.exports = {
   addAnimal,
   getAnimalById,
+  deleteAnimal,
+  getAnimalTypeBySlaughterhouse,
+  getAnimalTypeByAdmin,
+  updateAnimal,
+  searchAnimals,
+  getAnimalsBySlaughterhouse,
+  fetchAllAnimals,
+  filterByStatus,
+  getTransactionBySlaughterhouse,
+  filterByDateRange,
 };

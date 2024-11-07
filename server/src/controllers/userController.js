@@ -3,7 +3,9 @@ const userModel = require("../models/userModel");
 const { createdAt } = require("../utils/formattedTime");
 const fs = require("fs");
 const bcrypt = require("bcryptjs");
+const statusList = require("../constants/statusList");
 const saltsRounds = 10;
+const otpController = require("./otpController");
 
 const getUserByEmail = async (req, res) => {
   const { email } = req.query;
@@ -40,9 +42,15 @@ const getUserById = async (req, res) => {
   }
 };
 
-const getAllUser = async (req, res) => {
+const getAllUserByRole = async (req, res) => {
+  const { role } = req.query;
   try {
-    const verifiedUser = await userModel.findAll();
+    const verifiedUser = await userModel.findAll({
+      where: {
+        role: role,
+        status: statusList.verified,
+      },
+    });
 
     return res.status(200).json(verifiedUser);
   } catch (error) {
@@ -78,20 +86,12 @@ const deleteUser = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ Error: "User not found" });
-    } else {
-      const officeId = user.officeId;
-      await user.destroy();
-
-      // Delete the associated office if the user is an office
-      if (officeId) {
-        const office = await officeModel.findByPk(officeId);
-        await office.destroy();
-      }
-      return res.status(200).json({
-        status: "success",
-        message: "Deleted successfully!",
-      });
     }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Deleted successfully!",
+    });
   } catch (error) {
     return res.status(500).json({ Error: "Delete user error in server" });
   }
@@ -120,15 +120,8 @@ const searchUser = async (req, res) => {
 
 const updateUserData = async (req, res) => {
   const { id } = req.params;
-  const {
-    image,
-    officeName,
-    firstName,
-    lastName,
-    middleInitial,
-    contactNumber,
-    password,
-  } = req.body;
+  const { image, firstName, lastName, middleInitial, contactNumber, password } =
+    req.body;
 
   try {
     // Fetch the officeId from the userModel
@@ -271,14 +264,49 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const updateEmail = async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+
+  try {
+    const existUser = await userModel.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!email.trim()) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    if (existUser) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
+    }
+
+    await otpController.postOTP(email);
+    return res.status(200).json({
+      status: "success",
+      message: `Verification OTP sent to ${email}`,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getUserByEmail,
   getUserById,
-  getAllUser,
+  getAllUserByRole,
   getUserByRole,
   deleteUser,
   searchUser,
   updateUserData,
   updatePassword,
   updateProfile,
+  updateEmail,
 };

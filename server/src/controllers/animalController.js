@@ -158,22 +158,43 @@ const deleteAnimal = async (req, res) => {
 const getAnimalTypeBySlaughterhouse = async (req, res) => {
   const { type, slaughterhouseId } = req.params;
   try {
-    const animals = await animalModel.findAll({
-      where: {
-        type: type,
-        slaughterhouseId: slaughterhouseId,
-      },
-      include: [
-        {
-          model: ownerModel,
-          required: true,
+    let animals;
+    if (type === "All") {
+      animals = await animalModel.findAll({
+        where: {
+          slaughterhouseId: slaughterhouseId,
         },
-        {
-          model: transactionModel,
-          required: true,
+        include: [
+          {
+            model: ownerModel,
+            required: true,
+          },
+          {
+            model: transactionModel,
+            required: true,
+          },
+        ],
+      });
+      return res.status(200).json(animals);
+    } else {
+      animals = await animalModel.findAll({
+        where: {
+          type: type,
+          slaughterhouseId: slaughterhouseId,
         },
-      ],
-    });
+        include: [
+          {
+            model: ownerModel,
+            required: true,
+          },
+          {
+            model: transactionModel,
+            required: true,
+          },
+        ],
+      });
+    }
+
     return res.status(200).json(animals);
   } catch (error) {
     console.log(error);
@@ -273,6 +294,27 @@ const searchAnimals = async (req, res) => {
     return res.status(200).json(animals);
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const searchCustomer = async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    const customer = await ownerModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            customerName: {
+              [Op.like]: `${name}%`,
+            },
+          },
+        ],
+      },
+    });
+    return res.status(200).json(customer);
+  } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
@@ -377,6 +419,7 @@ module.exports = {
   getAnimalTypeByAdmin,
   updateAnimal,
   searchAnimals,
+  searchCustomer,
   getAnimalsBySlaughterhouse,
   fetchAllAnimals,
   filterByStatus,

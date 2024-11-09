@@ -1,8 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const animalController = require("../controllers/animalController");
+const {
+  addAnimalValidation,
+  validateForm,
+} = require("../middlewares/formValidation");
 
-router.post("/add-animal", animalController.addAnimal);
+router.post(
+  "/add-animal",
+  addAnimalValidation(),
+  validateForm,
+  animalController.addAnimal
+);
 router.get("/all", animalController.fetchAllAnimals);
 router.get("/:id", animalController.getAnimalById);
 router.delete("/:id", animalController.deleteAnimal);
@@ -16,6 +25,7 @@ router.get(
   "/search/:name/type/:type/slaughterhouseId/:slaughterhouseId",
   animalController.searchAnimals
 );
+router.get("/search/customer/:name", animalController.searchCustomer);
 router.get(
   "/slaughterhouse/:slaughterhouseId",
   animalController.getAnimalsBySlaughterhouse

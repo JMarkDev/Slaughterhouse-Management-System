@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 const VerifyOTP = ({ email, closeOTP, closeModal, onVerificationSuccess }) => {
   const toast = useToast();
   const dispatch = useDispatch();
-  // const { setUserData } = useContext(AuthContext);
+
   const navigate = useNavigate();
   const [countDown, setCountDown] = useState(0);
   const [otp, setOtp] = useState(new Array(4).fill(""));
@@ -59,6 +59,8 @@ const VerifyOTP = ({ email, closeOTP, closeModal, onVerificationSuccess }) => {
 
         toast.success(response.data.message);
         if (accessToken) {
+          console.log("accessToken", accessToken);
+
           Cookies.set("accessToken", accessToken, { expires: 1 });
           dispatch(fetchUser());
           // Set the access token in the axios headers
@@ -151,7 +153,7 @@ const VerifyOTP = ({ email, closeOTP, closeModal, onVerificationSuccess }) => {
 
           <button
             disabled={disableSubmit ? true : false}
-            className={`bg-main hover:bg-main_hover w-full p-2 rounded-lg ${
+            className={`bg-main  text-white hover:bg-main_hover w-full p-2.5 rounded-lg ${
               disableSubmit ? "cursor-not-allowed" : "cursor-pointer"
             }`}
             type="submit"

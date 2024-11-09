@@ -2,8 +2,8 @@ import axios from "../api/axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import rolesList from "../constants/rolesList";
 
-export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await axios.get("/users/get-all-user");
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async (role) => {
+  const response = await axios.get(`/users/get-all-user?role=${role}`);
   return response.data;
 });
 
@@ -35,6 +35,7 @@ const searchRoleUsers = (role) => {
 };
 
 export const searchAdminRole = searchRoleUsers(rolesList.admin);
+export const searchSlaughterhouseRole = searchRoleUsers(rolesList.supervisor);
 
 export const filterFacultyByCampus = createAsyncThunk(
   "users/filter-faculty",
@@ -94,6 +95,42 @@ const usersSlice = createSlice({
       })
       .addCase(fetchUserById.rejected, (state, action) => {
         state.status.fetchById = "failed";
+        state.error = action.error.message;
+      })
+      // delete user
+      .addCase(deleteUser.pending, (state) => {
+        state.status.users = "loading";
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.status.users = "succeeded";
+        state.users = state.users.filter((user) => user.id !== action.payload);
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.status.users = "failed";
+        state.error = action.error.message;
+      })
+      // search admin role
+      .addCase(searchAdminRole.pending, (state) => {
+        state.status.admin = "loading";
+      })
+      .addCase(searchAdminRole.fulfilled, (state, action) => {
+        state.status.admin = "succeeded";
+        state.users = action.payload;
+      })
+      .addCase(searchAdminRole.rejected, (state, action) => {
+        state.status.admin = "failed";
+        state.error = action.error.message;
+      })
+      // search slaughterhouse role
+      .addCase(searchSlaughterhouseRole.pending, (state) => {
+        state.status.slaughterhouse = "loading";
+      })
+      .addCase(searchSlaughterhouseRole.fulfilled, (state, action) => {
+        state.status.slaughterhouse = "succeeded";
+        state.users = action.payload;
+      })
+      .addCase(searchSlaughterhouseRole.rejected, (state, action) => {
+        state.status.slaughterhouse = "failed";
         state.error = action.error.message;
       });
   },

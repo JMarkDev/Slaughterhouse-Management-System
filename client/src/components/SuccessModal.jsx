@@ -1,14 +1,9 @@
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 
-const SuccessModal = ({
-  successModal,
-  closeSuccessModal,
-  documentName,
-  action,
-  documentId,
-}) => {
+const SuccessModal = ({ successModal, closeSuccessModal, id }) => {
   const navigate = useNavigate();
+
   return (
     <div>
       <div
@@ -61,19 +56,18 @@ const SuccessModal = ({
             </svg>
 
             <h3 className="mb-2 text-xl font-semibold text-gray-700">
-              Document {action}!
+              New Animal Added!
             </h3>
             <p className="mb-4 text-gray-500">
-              The document <strong>{documentName}</strong> has been successfully{" "}
-              {action}.
+              You have successfully added a new animal transaction
             </p>
 
             <button
-              onClick={() => navigate(`/document-details/${documentId}`)}
+              onClick={() => navigate(`/transaction/${id}`)}
               type="button"
               className="text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
             >
-              View Document
+              View Transaction
             </button>
           </div>
         </div>
@@ -85,9 +79,7 @@ const SuccessModal = ({
 SuccessModal.propTypes = {
   successModal: PropTypes.bool.isRequired,
   closeSuccessModal: PropTypes.func.isRequired,
-  documentName: PropTypes.string.isRequired,
-  action: PropTypes.string.isRequired,
-  documentId: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
 };
 
 export default SuccessModal;

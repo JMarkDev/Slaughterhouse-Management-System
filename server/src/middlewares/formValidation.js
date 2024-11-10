@@ -85,6 +85,16 @@ const registerValidationRules = () => {
       }
       return true;
     }),
+    body("contactNumber").custom((value, { req }) => {
+      if (!value) {
+        throw new Error("Contact Number is required");
+      }
+
+      if (req.body.contactNumber && req.body.contactNumber.length !== 11) {
+        throw new Error("Contact Number must be 11 digits");
+      }
+      return true;
+    }),
   ];
 };
 
@@ -102,6 +112,16 @@ const addAnimalValidation = () => {
     validateRequiredField("paidAmount"),
     validateRequiredField("balance"),
     validateRequiredField("status"),
+    body("customerPhone").custom((value, { req }) => {
+      if (!value) {
+        throw new Error("Contact Number is required");
+      }
+
+      if (req.body.customerPhone && req.body.customerPhone.length !== 11) {
+        throw new Error("Contact Number must be 11 digits");
+      }
+      return true;
+    }),
   ];
 };
 

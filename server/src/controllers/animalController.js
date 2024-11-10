@@ -149,7 +149,9 @@ const deleteAnimal = async (req, res) => {
         },
       ],
     });
-    return res.status(200).json({ animal, message: "Deleted successfully" });
+    return res
+      .status(200)
+      .json({ animal, status: "success", message: "Deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -229,16 +231,30 @@ const getAnimalTypeByAdmin = async (req, res) => {
 
 const updateAnimal = async (req, res) => {
   const { id } = req.params;
-  const { type, weight, pricePerKg, dateSlaughtered, total } = req.body;
+  const {
+    customerName,
+    customerPhone,
+    customerAddress,
+    type,
+    weight,
+    pricePerKg,
+    total,
+    paidAmount,
+    balance,
+    status,
+    slaughterDate,
+  } = req.body;
 
   try {
-    const animal = await animalModel.update(
+    const createdAt = new Date();
+    const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss");
+
+    const newTransaction = await transactionModel.update(
       {
-        type: type,
-        weight: weight,
-        pricePerKg: pricePerKg,
-        date: dateSlaughtered,
-        total: total,
+        amountPaid: paidAmount,
+        balance: balance,
+        status: status,
+        updatedAt: sequelize.literal(`'${formattedDate}'`),
       },
       {
         where: {
@@ -247,18 +263,50 @@ const updateAnimal = async (req, res) => {
       }
     );
 
-    return res.status(200).json({ animal, message: "Updated successfully" });
+    await animalModel.update(
+      {
+        type: type,
+        weight: weight,
+        pricePerKg: pricePerKg,
+        total: total,
+        slaughterDate: slaughterDate,
+        updatedAt: sequelize.literal(`'${formattedDate}'`),
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+
+    await ownerModel.update(
+      {
+        customerName,
+        customerPhone,
+        customerAddress,
+        updatedAt: sequelize.literal(`'${formattedDate}'`),
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+
+    return res
+      .status(200)
+      .json({ status: "success", message: "Updated successfully" });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
 
 const searchAnimals = async (req, res) => {
-  const { name, type, slaughterhouseId } = req.params;
+  const { name, slaughterhouseId } = req.params;
   try {
     const animals = await animalModel.findAll({
       where: {
-        type: type,
         slaughterhouseId: slaughterhouseId,
       },
       include: [
@@ -267,27 +315,46 @@ const searchAnimals = async (req, res) => {
           required: true,
           where: {
             [Op.or]: [
-              {
-                customerName: {
-                  [Op.like]: `${name}%`,
-                },
-              },
-              {
-                customerPhone: {
-                  [Op.like]: `${name}%`,
-                },
-              },
-              {
-                customerAddress: {
-                  [Op.like]: `${name}%`,
-                },
-              },
+              { customerName: { [Op.like]: `${name}%` } },
+              { customerPhone: { [Op.like]: `${name}%` } },
+              { customerAddress: { [Op.like]: `${name}%` } },
             ],
           },
         },
         {
           model: transactionModel,
           required: true,
+          // where: {
+          //   [Op.or]: [{ id: { [Op.like]: `${name}%` } }],
+          // },
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const searchTransaction = async (req, res) => {
+  const { name, slaughterhouseId } = req.params;
+  try {
+    const animals = await animalModel.findAll({
+      where: {
+        slaughterhouseId: slaughterhouseId,
+      },
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+        },
+        {
+          model: transactionModel,
+          required: true,
+          where: {
+            [Op.or]: [{ id: { [Op.like]: `${name}%` } }],
+          },
         },
       ],
     });
@@ -420,6 +487,7 @@ module.exports = {
   updateAnimal,
   searchAnimals,
   searchCustomer,
+  searchTransaction,
   getAnimalsBySlaughterhouse,
   fetchAllAnimals,
   filterByStatus,

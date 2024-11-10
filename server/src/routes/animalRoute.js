@@ -20,12 +20,21 @@ router.get(
   animalController.getAnimalTypeBySlaughterhouse
 );
 router.get("/type/:type", animalController.getAnimalTypeByAdmin);
-router.put("/:id", animalController.updateAnimal);
+router.put(
+  "/:id",
+  addAnimalValidation(),
+  validateForm,
+  animalController.updateAnimal
+);
 router.get(
-  "/search/:name/type/:type/slaughterhouseId/:slaughterhouseId",
+  "/search/:name/slaughterhouseId/:slaughterhouseId",
   animalController.searchAnimals
 );
 router.get("/search/customer/:name", animalController.searchCustomer);
+router.get(
+  "/search/transaction/:name/slaughterhouseId/:slaughterhouseId",
+  animalController.searchTransaction
+);
 router.get(
   "/slaughterhouse/:slaughterhouseId",
   animalController.getAnimalsBySlaughterhouse

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AnimalsTable from "@/components/table/AnimalsTable";
 import Pagination from "../../../components/Pagination";
 import { getUserData } from "../../../services/authSlice";
-import AddAnimal from "./AddCattle";
+import AddAnimal from "./AddAnimal";
 import AnimalDropdown from "../../../components/dropdown/AnimalsDropdown";
 
 const AnimalRecords = () => {
@@ -29,7 +29,6 @@ const AnimalRecords = () => {
       dispatch(
         searchAnimals({
           name: searchTerm,
-          type: animalType,
           slaughterhouseId: user?.id,
         })
       );

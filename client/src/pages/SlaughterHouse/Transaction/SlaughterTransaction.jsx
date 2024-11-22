@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import {
-  getAnimals,
-  searchTransaction,
+  getFilteredAnimals,
+  // searchTransaction,
   getTransactionBySlaughterhouse,
-  filterByStatus,
-  filterAnimalsByType,
+  filterAllAnimals,
   // filterByDateRange,
 } from "../../../services/animalsSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,28 +17,43 @@ import AnimalDropdown from "../../../components/dropdown/AnimalsDropdown";
 const SlaughterTransaction = () => {
   const dispatch = useDispatch();
   const user = useSelector(getUserData);
-  const animals = useSelector(getAnimals);
+  const animals = useSelector(getFilteredAnimals);
   const [searchTerm, setSearchTerm] = useState("");
   const [animalsList, setAnimalsList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [startDate, setStartDate] = useState("");
-  // const [endDate, setEndDate] = useState("");
+  const [animalType, setAnimalType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [status, setStatus] = useState(null);
 
   const dataPerPage = 5;
 
+  // useEffect(() => {
+  //   if (searchTerm) {
+  //     dispatch(
+  //       searchTransaction({
+  //         name: searchTerm,
+  //         type: "",
+  //         slaughterhouseId: user?.id,
+  //       })
+  //     );
+  //   } else {
+  //     dispatch(getTransactionBySlaughterhouse(user?.id));
+  //   }
+  // }, [dispatch, searchTerm, user]);
+
   useEffect(() => {
-    if (searchTerm) {
-      dispatch(
-        searchTransaction({
-          name: searchTerm,
-          type: "Cattle",
-          slaughterhouseId: user?.id,
-        })
-      );
-    } else {
-      dispatch(getTransactionBySlaughterhouse(user?.id));
-    }
-  }, [dispatch, searchTerm, user]);
+    dispatch(
+      filterAllAnimals({
+        type: animalType,
+        startDate: startDate,
+        endDate: endDate,
+        slaughterhouseId: user?.id,
+        transactionID: searchTerm,
+        status: status,
+      })
+    );
+  }, [dispatch, animalType, startDate, endDate, user, searchTerm, status]);
 
   useEffect(() => {
     if (animals) {
@@ -48,23 +62,38 @@ const SlaughterTransaction = () => {
   }, [animals]);
 
   const fetchUpdate = () => {
-    dispatch(getTransactionBySlaughterhouse(user?.id));
+    dispatch(
+      filterAllAnimals({
+        type: animalType,
+        startDate: startDate,
+        endDate: endDate,
+        slaughterhouseId: user?.id,
+        transactionID: searchTerm,
+        status: status,
+      })
+    );
   };
 
   const handleFilter = (status) => {
-    if (status === "Default") {
-      dispatch(getTransactionBySlaughterhouse(user?.id));
-      return;
-    }
-    dispatch(filterByStatus({ status: status, slaughterhouseId: user?.id }));
+    setStatus(status);
+    // if (status === "Default") {
+    //   dispatch(getTransactionBySlaughterhouse(user?.id));
+    //   return;
+    // }
+    // dispatch(filterByStatus({ status: status, slaughterhouseId: user?.id }));
   };
 
   const handleFilterByAnimal = (animal) => {
-    if (animal === "Default") {
-      dispatch(getTransactionBySlaughterhouse(user?.id));
-      return;
+    if (animal === "Default" || animal === "All") {
+      setAnimalType("All");
+    } else {
+      setAnimalType(animal);
     }
-    dispatch(filterAnimalsByType({ type: animal, slaughterhouseId: user?.id }));
+    // if (animal === "Default") {
+    //   dispatch(getTransactionBySlaughterhouse(user?.id));
+    //   return;
+    // }
+    // dispatch(filterAnimalsByType({ type: animal, slaughterhouseId: user?.id }));
   };
 
   // const handleFilterByDate = () => {

@@ -220,8 +220,8 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                   >
                     <option value="">Select Animal Type</option>
                     <option value="Cattle">Cattle</option>
-                    <option value="Pig">Pig</option>
-                    <option value="Goat">Goat</option>
+                    <option value="Pigs">Pigs</option>
+                    <option value="Goats">Goats</option>
                   </select>
                   {animalTypeError && (
                     <span className="text-red-500 text-sm">

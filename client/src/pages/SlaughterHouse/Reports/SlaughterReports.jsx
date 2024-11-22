@@ -66,7 +66,6 @@ const Reports = () => {
       if (/[,]/.test(field)) {
         return `"${field}"`;
       }
-
       return field;
     };
 
@@ -77,20 +76,24 @@ const Reports = () => {
         formatFieldCsv(response.owner?.customerPhone), // Customer Phone
         formatFieldCsv(response.owner?.customerAddress), // Customer Address
         formatFieldCsv(response.condition), // Condition
-        formatFieldCsv(response.pricePerKg), // Price Per Kg
-        formatFieldCsv(response.total), // Total
-        formatFieldCsv(response.transaction?.amountPaid), // Amount Paid
-        formatFieldCsv(response.transaction?.balance), // Balance
+        formatFieldCsv(`₱ ${response.pricePerKg}`), // Price Per Kg
+        formatFieldCsv(`₱ ${response.total}`), // Total
+        formatFieldCsv(`₱ ${response.transaction?.amountPaid}`), // Amount Paid
+        formatFieldCsv(`₱ ${response.transaction?.balance}`), // Balance
         formatFieldCsv(dateFormat(response.createdAt)), // Created At (formatted)
       ];
     });
+
     const csvContent = [headers, ...dataRows]
       .map((row) => row.join(","))
       .join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    // Add UTF-8 BOM to the start of the file
+    const csvWithBom = "\uFEFF" + csvContent;
+
+    const blob = new Blob([csvWithBom], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
+    link.href = URL.createObjectURL(blob);
     link.download = "Transaction_Reports.csv";
     document.body.appendChild(link);
     link.click();
@@ -206,7 +209,7 @@ const Reports = () => {
         <ReportsTable animalsList={animals} />
       </div>
       <div className="mt-10">
-        <h1 className="font-bold mb-5">Documents Chart</h1>
+        <h1 className="font-bold mb-5">Transaction Chart</h1>
         <LineChartDocumentSubmissions data={animals} />
       </div>
     </div>

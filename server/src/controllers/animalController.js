@@ -1,9 +1,9 @@
 const animalModel = require("../models/animalModel");
 const date = require("date-and-time");
 const sequelize = require("../config/database");
-const { Op } = require("sequelize");
 const ownerModel = require("../models/ownerModel");
 const transactionModel = require("../models/transactionModel");
+const { Sequelize, Op } = require("sequelize");
 
 const addAnimal = async (req, res) => {
   const {
@@ -11,6 +11,7 @@ const addAnimal = async (req, res) => {
     customerPhone,
     customerAddress,
     type,
+    condition,
     weight,
     pricePerKg,
     total,
@@ -52,6 +53,7 @@ const addAnimal = async (req, res) => {
     const newAnimal = await animalModel.create({
       id: transaction,
       type: type,
+      condition: condition,
       weight: weight,
       pricePerKg: pricePerKg,
       total: total,
@@ -236,6 +238,7 @@ const updateAnimal = async (req, res) => {
     customerPhone,
     customerAddress,
     type,
+    condition,
     weight,
     pricePerKg,
     total,
@@ -266,6 +269,7 @@ const updateAnimal = async (req, res) => {
     await animalModel.update(
       {
         type: type,
+        condition: condition,
         weight: weight,
         pricePerKg: pricePerKg,
         total: total,
@@ -478,6 +482,84 @@ const filterByDateRange = async (req, res) => {
   }
 };
 
+const filterAllAnimals = async (req, res) => {
+  const {
+    type,
+    startDate,
+    endDate,
+    slaughterhouseId,
+    name,
+    status,
+    transactionID,
+    customerName,
+  } = req.query;
+
+  const whereConditions = {};
+
+  if (type && type !== "All") {
+    whereConditions.type = type;
+  }
+
+  if (startDate && endDate) {
+    whereConditions.createdAt = {
+      [Sequelize.Op.between]: [startDate, endDate],
+    };
+  }
+
+  const ownerWhereCondition = name
+    ? {
+        [Op.or]: [
+          { customerName: { [Op.like]: `${name}%` } },
+          { customerPhone: { [Op.like]: `${name}%` } },
+          { customerAddress: { [Op.like]: `${name}%` } },
+        ],
+      }
+    : {};
+
+  if (slaughterhouseId) {
+    whereConditions.slaughterhouseId = slaughterhouseId;
+  }
+
+  const transactionWhereCondition = {};
+
+  if (status && status !== "Default") {
+    transactionWhereCondition.status = status;
+  }
+
+  if (transactionID) {
+    transactionWhereCondition.id = {
+      [Op.like]: `${transactionID}%`,
+    };
+  }
+
+  if (customerName) {
+    ownerWhereCondition.customerName = {
+      [Op.like]: `${customerName}%`,
+    };
+  }
+
+  try {
+    const animals = await animalModel.findAll({
+      where: whereConditions,
+      include: [
+        {
+          model: ownerModel,
+          required: true,
+          where: ownerWhereCondition,
+        },
+        {
+          model: transactionModel,
+          required: true,
+          where: transactionWhereCondition,
+        },
+      ],
+    });
+    return res.status(200).json(animals);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addAnimal,
   getAnimalById,
@@ -493,4 +575,5 @@ module.exports = {
   filterByStatus,
   getTransactionBySlaughterhouse,
   filterByDateRange,
+  filterAllAnimals,
 };

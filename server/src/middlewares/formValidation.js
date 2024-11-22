@@ -104,6 +104,7 @@ const addAnimalValidation = () => {
     validateRequiredField("customerPhone"),
     validateRequiredField("customerAddress"),
     validateRequiredField("type"),
+    validateRequiredField("condition"),
     validateRequiredField("weight"),
     validateRequiredField("pricePerKg"),
     validateRequiredField("total"),

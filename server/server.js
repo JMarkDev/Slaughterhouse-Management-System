@@ -12,6 +12,7 @@ const authRoute = require("./src/routes/authRoute");
 const userRoute = require("./src/routes/userRoute");
 const notificationRoute = require("./src/routes/notificationRoute");
 const animalRoute = require("./src/routes/animalRoute");
+const transactionRoute = require("./src/routes/transactionRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -61,6 +62,7 @@ app.use(verifyToken);
 app.use("/users", userRoute);
 app.use("/notification", notificationRoute);
 app.use("/animals", animalRoute);
+app.use("/transactions", transactionRoute);
 
 app.get("/");
 // Server setup

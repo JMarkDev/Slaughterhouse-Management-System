@@ -12,6 +12,8 @@ router.post(
   validateForm,
   animalController.addAnimal
 );
+router.get("/filter-all-animals", animalController.filterAllAnimals);
+
 router.get("/all", animalController.fetchAllAnimals);
 router.get("/:id", animalController.getAnimalById);
 router.delete("/:id", animalController.deleteAnimal);

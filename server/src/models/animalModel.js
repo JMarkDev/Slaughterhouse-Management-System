@@ -15,6 +15,10 @@ const Animal = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    condition: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     weight: {
       type: DataTypes.FLOAT,
       allowNull: false,

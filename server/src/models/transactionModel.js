@@ -1,5 +1,5 @@
 const sequelize = require("../config/database");
-const { DataTypes } = require("sequelize");
+const { DataTypes, TINYINT } = require("sequelize");
 // const animalModel = require("./animalModel");
 // const ownerModel = require("./ownerModel");
 // const userModel = require("./userModel");
@@ -21,7 +21,7 @@ const Transaction = sequelize.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("Paid", "Partial", "Unpaid"),
+      type: TINYINT,
       allowNull: false,
     },
     createdAt: {

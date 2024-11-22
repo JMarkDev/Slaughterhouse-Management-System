@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import {
-  getAnimals,
-  filterAnimalsByType,
-  searchAnimals,
+  // getAnimals,
+  // filterAnimalsByType,
+  // searchAnimals,
+  filterAllAnimals,
+  getFilteredAnimals,
 } from "../../../services/animalsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import AnimalsTable from "@/components/table/AnimalsTable";
@@ -15,29 +17,43 @@ import AnimalDropdown from "../../../components/dropdown/AnimalsDropdown";
 const AnimalRecords = () => {
   const dispatch = useDispatch();
   const user = useSelector(getUserData);
-  const animals = useSelector(getAnimals);
+  // const animals = useSelector(getAnimals);
+  const allAnimals = useSelector(getFilteredAnimals);
   const [searchTerm, setSearchTerm] = useState("");
-  const [animalsList, setAnimalsList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [animalType, setAnimalType] = useState("All");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const dataPerPage = 5;
 
   useEffect(() => {
-    if (searchTerm) {
-      dispatch(
-        searchAnimals({
-          name: searchTerm,
-          slaughterhouseId: user?.id,
-        })
-      );
-    } else {
-      dispatch(
-        filterAnimalsByType({ type: animalType, slaughterhouseId: user?.id })
-      );
-    }
-  }, [dispatch, searchTerm, user, animalType]);
+    dispatch(
+      filterAllAnimals({
+        type: animalType,
+        startDate: startDate,
+        endDate: endDate,
+        slaughterhouseId: user?.id,
+        name: searchTerm,
+      })
+    );
+  }, [dispatch, animalType, startDate, endDate, user, searchTerm]);
+
+  // useEffect(() => {
+  //   if (searchTerm) {
+  //     dispatch(
+  //       searchAnimals({
+  //         name: searchTerm,
+  //         slaughterhouseId: user?.id,
+  //       })
+  //     );
+  //   } else {
+  //     dispatch(
+  //       filterAnimalsByType({ type: animalType, slaughterhouseId: user?.id })
+  //     );
+  //   }
+  // }, [dispatch, searchTerm, user, animalType]);
 
   const handleFilterByAnimal = (type) => {
     if (type === "Default" || type === "All") {
@@ -46,20 +62,20 @@ const AnimalRecords = () => {
       setAnimalType(type);
     }
 
-    dispatch(
-      filterAnimalsByType({ type: animalType, slaughterhouseId: user?.id })
-    );
+    // dispatch(
+    //   filterAnimalsByType({ type: animalType, slaughterhouseId: user?.id })
+    // );
   };
-
-  useEffect(() => {
-    if (animals) {
-      setAnimalsList(animals);
-    }
-  }, [animals]);
 
   const fetchUpdate = () => {
     dispatch(
-      filterAnimalsByType({ type: animalType, slaughterhouseId: user?.id })
+      filterAllAnimals({
+        type: animalType,
+        startDate: startDate,
+        endDate: endDate,
+        slaughterhouseId: user?.id,
+        name: searchTerm,
+      })
     );
   };
 
@@ -74,7 +90,7 @@ const AnimalRecords = () => {
   // Paganation
   const indexOfLastDocument = currentPage * dataPerPage;
   const indexOfFirstDocument = indexOfLastDocument - dataPerPage;
-  const currentData = animalsList?.slice(
+  const currentData = allAnimals?.slice(
     indexOfFirstDocument,
     indexOfLastDocument
   );
@@ -113,7 +129,7 @@ const AnimalRecords = () => {
         <div className="flex justify-end mt-5">
           <Pagination
             dataPerPage={dataPerPage}
-            totalData={animalsList?.length}
+            totalData={allAnimals?.length}
             paginate={paginate}
             currentPage={currentPage}
           />

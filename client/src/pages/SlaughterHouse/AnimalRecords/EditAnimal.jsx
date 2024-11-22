@@ -13,6 +13,7 @@ import {
   fetchAnimalById,
   getAnimalById,
 } from "../../../services/animalsSlice";
+import transactionStatus from "../../../constants/transactionStatus";
 
 const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
   const [customerAddressError, setCustomerAddressError] = useState("");
   const [customerPhoneError, setCustomerPhoneError] = useState("");
   const [animalTypeError, setAnimalTypeError] = useState("");
+  const [condtitionError, setConditionError] = useState("");
   const [dateSlaughteredError, setDateSlaughteredError] = useState("");
   const [weightError, setWeightError] = useState("");
   const [pricePerKgError, setPricePerKgError] = useState("");
@@ -73,6 +75,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
       balance: animal?.transaction?.balance || 0.0,
       status: animal?.transaction?.status || "",
       slaughterhouseId: animal?.slaughterhouseId || "",
+      condition: animal?.condition || "",
     });
   }, [animal, user]);
 
@@ -97,11 +100,11 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
     // Set transaction status based on payment amount
     let status;
     if (paidAmount >= parseFloat(totalPrice) && paidAmount !== 0.0) {
-      status = "Paid";
+      status = transactionStatus.paid;
     } else if (paidAmount < totalPrice && paidAmount !== 0.0) {
-      status = "Partial";
+      status = transactionStatus.partial;
     } else if (paidAmount === 0.0) {
-      status = "Unpaid";
+      status = transactionStatus.unpaid;
     }
     setData((prevData) => ({ ...prevData, status: status }));
   }, [data.weight, data.pricePerKg, data.paidAmount]);
@@ -116,6 +119,14 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
       setSearchTerm(data.customerName);
     }
   };
+
+  const conditions = [
+    "Healthy",
+    "Lame (Lumpo)",
+    "Injured",
+    "Infected",
+    "Undernourished/Thin",
+  ];
 
   useEffect(() => {
     if (customers) {
@@ -177,6 +188,9 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
               break;
             case "type":
               setAnimalTypeError(`Animal ${error.msg}`);
+              break;
+            case "condition":
+              setConditionError(`Animal ${error.msg}`);
               break;
             case "slaughterDate":
               setDateSlaughteredError(error.msg);
@@ -380,7 +394,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                   <select
                     name=""
                     id=""
-                    value={animal?.type || ""} // Set the input value to the selected animal type
+                    value={data?.type || ""} // Set the input value to the selected animal type
                     onChange={(e) => setData({ ...data, type: e.target.value })}
                     className={`border-gray-300 ${
                       animalTypeError ? "border-red-500" : "border-gray-300"
@@ -389,13 +403,59 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                   >
                     <option value="">Select Animal Type</option>
                     <option value="Cattle">Cattle</option>
-                    <option value="Pig">Pig</option>
-                    <option value="Goat">Goat</option>
+                    <option value="Pigs">Pigs</option>
+                    <option value="Goats">Goats</option>
                   </select>
                   {animalTypeError && (
                     <span className="text-red-500 text-sm">
                       {animalTypeError}
                     </span>
+                  )}
+                </div>
+                <div className="mt-5">
+                  <label
+                    htmlFor="name"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Animal Condition
+                  </label>
+                  <select
+                    name=""
+                    id=""
+                    onChange={(e) =>
+                      setData({ ...data, condition: e.target.value })
+                    }
+                    value={data?.condition || ""} // Set the input value to the selected animal condition
+                    className={`border-gray-300 ${
+                      condtitionError ? "border-red-500" : "border-gray-300"
+                    }
+              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+                  >
+                    <option value="">-- Choose a condition --</option>
+                    {conditions.map((condition, index) => (
+                      <option key={index} value={condition}>
+                        {condition}
+                      </option>
+                    ))}
+                  </select>
+                  {condtitionError && (
+                    <span className="text-red-500 text-sm">
+                      {condtitionError}
+                    </span>
+                  )}
+                  {data.condition === "Infected" && (
+                    <input
+                      type="text"
+                      id="name"
+                      onChange={(e) => {
+                        setData({
+                          ...data,
+                          condition: `Infected ${e.target.value}`,
+                        });
+                      }}
+                      placeholder="please specify"
+                      className=" mt-2 border-gray-300  bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    />
                   )}
                 </div>
 
@@ -413,7 +473,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                       onChange={(e) =>
                         setData({ ...data, slaughterDate: e.target.value })
                       }
-                      value={animal?.slaughterDate} // Set the input value to the selected slaughter date
+                      value={data?.slaughterDate} // Set the input value to the selected slaughter date
                       className={`   ${
                         dateSlaughteredError
                           ? "border-red-500"
@@ -480,7 +540,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                     <input
                       type="number"
                       id="name"
-                      value={animal?.pricePerKg || ""} // Set the input value to the selected price per kg
+                      value={data?.pricePerKg || ""} // Set the input value to the selected price per kg
                       onChange={(e) =>
                         setData({ ...data, pricePerKg: e.target.value })
                       }

@@ -12,6 +12,7 @@ import {
   clearSearch,
 } from "../../../services/animalsSlice";
 import SuccessModal from "../../../components/SuccessModal";
+import transactionStatus from "../../../constants/transactionStatus";
 
 const AddAnimal = ({ closeModal, fetchUpdate }) => {
   const dispatch = useDispatch();
@@ -31,26 +32,42 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
     customerAddress: location,
     customerPhone: "",
     type: "",
+    condition: "",
     slaughterDate: "",
     weight: "",
     pricePerKg: "",
     total: 0.0,
     paidAmount: 0.0,
     balance: 0.0,
-    status: "",
+    status: null,
     slaughterhouseId: user?.id,
   });
+  // const [selectedCondition, setSelectedCondition] = useState("");
+
+  const conditions = [
+    "Healthy",
+    "Lame (Lumpo)",
+    "Injured",
+    "Infected",
+    "Undernourished/Thin",
+  ];
 
   const [customerNameError, setCustomerNameError] = useState("");
   const [customerAddressError, setCustomerAddressError] = useState("");
   const [customerPhoneError, setCustomerPhoneError] = useState("");
   const [animalTypeError, setAnimalTypeError] = useState("");
+  const [condtitionError, setConditionError] = useState("");
   const [dateSlaughteredError, setDateSlaughteredError] = useState("");
   const [weightError, setWeightError] = useState("");
   const [pricePerKgError, setPricePerKgError] = useState("");
   const [totalError, setTotalError] = useState("");
   const [paidAmountError, setPaidAmountError] = useState("");
   const [balanceError, setBalanceError] = useState("");
+
+  // const handleSelectChange = (event) => {
+  //   setSelectedCondition(event.target.value);
+  //   console.log(event.target.value);
+  // };
 
   useEffect(() => {
     // Calculate total and balance
@@ -73,11 +90,11 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
     // Set transaction status based on payment amount
     let status;
     if (paidAmount >= parseFloat(totalPrice) && paidAmount !== 0.0) {
-      status = "Paid";
+      status = transactionStatus.paid;
     } else if (paidAmount < totalPrice && paidAmount !== 0.0) {
-      status = "Partial";
+      status = transactionStatus.partial;
     } else if (paidAmount === 0.0) {
-      status = "Unpaid";
+      status = transactionStatus.unpaid;
     }
     setData((prevData) => ({ ...prevData, status: status }));
   }, [data.weight, data.pricePerKg, data.paidAmount]);
@@ -121,6 +138,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
     setCustomerAddressError("");
     setCustomerPhoneError("");
     setAnimalTypeError("");
+    setConditionError("");
     setDateSlaughteredError("");
     setWeightError("");
     setPricePerKgError("");
@@ -154,6 +172,9 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
               break;
             case "type":
               setAnimalTypeError(`Animal ${error.msg}`);
+              break;
+            case "condition":
+              setConditionError(`Animal ${error.msg}`);
               break;
             case "slaughterDate":
               setDateSlaughteredError(error.msg);
@@ -361,36 +382,31 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       Phone Number
                     </label>
                     <input
+                      // {...register("contactNumber")}
                       type="number"
-                      id="name"
+                      id="contact_number"
                       maxLength={11}
-                      disabled={data.customerPhone.length === 11 ? true : false}
-                      onChange={(e) =>
-                        setData({ ...data, customerPhone: e.target.value })
-                      }
-                      pattern="[0-9]*" // Only allows numbers
-                      inputMode="numeric" // Opens numeric keyboard on mobile
                       onKeyDown={(e) => {
-                        if (
-                          e.key === "-" ||
-                          e.key === "e" ||
-                          e.key === "E" ||
-                          e.key === "+" ||
-                          e.key === "."
-                        ) {
-                          e.preventDefault(); // Prevent non-numeric characters
+                        // Prevent non-numeric characters and certain symbols
+                        if (["-", "e", "E", "+", "."].includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onChange={(e) => {
+                        // Limit input to 11 characters
+                        if (e.target.value.length > 11) {
+                          e.target.value = e.target.value.slice(0, 11);
+                          setData({
+                            ...data,
+                            customerPhone: e.target.value.slice(0, 11),
+                          });
                         }
                       }}
                       className={` ${
                         customerPhoneError
                           ? "border-red-500"
                           : "border-gray-300"
-                      }
-                    ${
-                      data.customerPhone.length === 11
-                        ? "cursor-not-allowed"
-                        : ""
-                    }
+                      }               
       border-gray-300 
               bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Customer Phone Number"
@@ -424,8 +440,8 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                     >
                       <option value="">Select Animal Type</option>
                       <option value="Cattle">Cattle</option>
-                      <option value="Pig">Pig</option>
-                      <option value="Goat">Goat</option>
+                      <option value="Pigs">Pigs</option>
+                      <option value="Goats">Goats</option>
                     </select>
                     {animalTypeError && (
                       <span className="text-red-500 text-sm">
@@ -433,6 +449,52 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       </span>
                     )}
                   </div>
+                  <div className="mt-5">
+                    <label
+                      htmlFor="name"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Animal Condition
+                    </label>
+                    <select
+                      name=""
+                      id=""
+                      onChange={(e) =>
+                        setData({ ...data, condition: e.target.value })
+                      }
+                      className={`border-gray-300 ${
+                        condtitionError ? "border-red-500" : "border-gray-300"
+                      }
+              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+                    >
+                      <option value="">-- Choose a condition --</option>
+                      {conditions.map((condition, index) => (
+                        <option key={index} value={condition}>
+                          {condition}
+                        </option>
+                      ))}
+                    </select>
+                    {condtitionError && (
+                      <span className="text-red-500 text-sm">
+                        {condtitionError}
+                      </span>
+                    )}
+                    {data.condition === "Infected" && (
+                      <input
+                        type="text"
+                        id="name"
+                        onChange={(e) => {
+                          setData({
+                            ...data,
+                            condition: `Infected ${e.target.value}`,
+                          });
+                        }}
+                        placeholder="please specify"
+                        className=" mt-2 border-gray-300  bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                      />
+                    )}
+                  </div>
+
                   <div className="mt-5 flex gap-3 ">
                     <div className="w-full">
                       <label

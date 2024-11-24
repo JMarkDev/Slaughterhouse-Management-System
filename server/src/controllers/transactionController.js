@@ -5,6 +5,9 @@ const { Op } = require("sequelize");
 const ownerModel = require("../models/ownerModel");
 const transactionModel = require("../models/transactionModel");
 const transactionStatus = require("../constants/transactionStatus");
+const userModel = require("../models/userModel");
+const statusList = require("../constants/statusList");
+const notificationModel = require("../models/notificationModel");
 
 const updateTransaction = async (req, res) => {
   const { id } = req.params;
@@ -22,6 +25,14 @@ const updateTransaction = async (req, res) => {
         id: id,
       },
     });
+
+    const getOwner = await ownerModel.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    const { customerName } = getOwner;
 
     if (!getTransaction) {
       return res.status(404).json({ message: "Transaction not found" });
@@ -44,6 +55,25 @@ const updateTransaction = async (req, res) => {
         id: id,
       },
     });
+
+    const users = await userModel.findAll({
+      where: {
+        status: statusList.verified,
+      },
+    });
+
+    await Promise.all(
+      users.map(async (user) => {
+        await notificationModel.create({
+          transactionId: getTransaction.id,
+          user_id: user.id,
+          ownerName: customerName,
+          message: `Transaction ID: ${getTransaction.id} has been paid by ${customerName}.`,
+          is_read: 0,
+          createdAt: sequelize.literal(`'${formattedDate}'`),
+        });
+      })
+    );
 
     return res.status(200).json({
       status: "success",

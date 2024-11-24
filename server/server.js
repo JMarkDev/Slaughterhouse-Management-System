@@ -85,17 +85,12 @@ io.on("connection", (socket) => {
     console.log("User disconnected");
   });
 
-  // socket.on("upload_document", (data) => {
-  //   socket.broadcast.emit("success_upload", data);
-  //   console.log(data);
-  // });
-
-  // socket.on("received_document", (data) => {
-  //   socket.broadcast.emit("success_received", data);
-  // });
-
   socket.on("add_animal", (data) => {
     socket.broadcast.emit("success_add", data);
+  });
+
+  socket.on("new_notification", (data) => {
+    socket.broadcast.emit("success_notification", data);
   });
 });
 

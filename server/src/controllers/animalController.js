@@ -4,6 +4,10 @@ const sequelize = require("../config/database");
 const ownerModel = require("../models/ownerModel");
 const transactionModel = require("../models/transactionModel");
 const { Sequelize, Op } = require("sequelize");
+const notificationModel = require("../models/notificationModel");
+const userModel = require("../models/userModel");
+const rolesList = require("../constants/rolesList");
+const statusList = require("../constants/statusList");
 
 const addAnimal = async (req, res) => {
   const {
@@ -30,7 +34,7 @@ const addAnimal = async (req, res) => {
     const formattedBalance = parseFloat(balance).toFixed(2);
 
     const createdAt = new Date();
-    const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss");
+    const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss", true); // true for UTC time
 
     const year = new Date().getFullYear().toString().slice(-2); // Last two digits of the year
     const chars =
@@ -77,6 +81,26 @@ const addAnimal = async (req, res) => {
       animalId: newAnimal.id,
       createdAt: sequelize.literal(`'${formattedDate}'`),
     });
+
+    const admin = await userModel.findAll({
+      where: {
+        role: rolesList.admin,
+        status: statusList.verified,
+      },
+    });
+
+    await Promise.all(
+      admin.map(async (user) => {
+        await notificationModel.create({
+          transactionId: newTransaction.id,
+          user_id: user.id,
+          ownerName: customerName,
+          message: `New transaction added with transaction ID: ${newTransaction.id}`,
+          is_read: 0,
+          createdAt: sequelize.literal(`'${formattedDate}'`),
+        });
+      })
+    );
 
     return res.status(201).json({
       newAnimal,

@@ -30,9 +30,9 @@ export const deleteAnimal = createAsyncThunk(
 
 export const searchAnimals = createAsyncThunk(
   "animals/searchAnimals",
-  async ({ name, type, slaughterhouseId }) => {
+  async ({ name, slaughterhouseId }) => {
     const response = await axios.get(
-      `/animals/search/${name}/type/${type}/slaughterhouseId/${slaughterhouseId}`
+      `/animals/search/${name}/slaughterhouseId/${slaughterhouseId}`
     );
     return response.data;
   }
@@ -42,7 +42,16 @@ export const searchCustomer = createAsyncThunk(
   "animals/searchCustomer",
   async (name) => {
     const response = await axios.get(`/animals/search/customer/${name}`);
-    console.log(name);
+    return response.data;
+  }
+);
+
+export const searchTransaction = createAsyncThunk(
+  "animals/searchTransaction",
+  async ({ name, slaughterhouseId }) => {
+    const response = await axios.get(
+      `/animals/search/transaction/${name}/slaughterhouseId/${slaughterhouseId}`
+    );
     return response.data;
   }
 );
@@ -50,7 +59,6 @@ export const searchCustomer = createAsyncThunk(
 export const filterAnimalsByType = createAsyncThunk(
   "animals/filterAnimalsByType",
   async ({ type, slaughterhouseId }) => {
-    console.log(type, slaughterhouseId);
     const response = await axios.get(
       `/animals/type/${type}/slaughterhouseId/${slaughterhouseId}`
     );
@@ -88,12 +96,55 @@ export const filterByDateRange = createAsyncThunk(
   }
 );
 
+export const updateTransaction = createAsyncThunk(
+  "animals/updateTransaction",
+  async ({ id, toast }) => {
+    const response = await axios.put(`/transactions/${id}`);
+    if (response.data.status === "success") {
+      toast.success(response.data.message);
+      return id;
+    }
+  }
+);
+
+export const filterAllAnimals = createAsyncThunk(
+  "animals/filter-all-animals",
+  async ({
+    type,
+    startDate,
+    endDate,
+    slaughterhouseId,
+    name,
+    status,
+    transactionID,
+    customerName,
+  }) => {
+    // Build query parameters only if they are provided
+    const queryParams = new URLSearchParams();
+    if (type) queryParams.append("type", type);
+    if (slaughterhouseId)
+      queryParams.append("slaughterhouseId", slaughterhouseId);
+    if (startDate) queryParams.append("startDate", startDate);
+    if (endDate) queryParams.append("endDate", endDate);
+    if (name) queryParams.append("name", name);
+    if (status) queryParams.append("status", status);
+    if (transactionID) queryParams.append("transactionID", transactionID);
+    if (customerName) queryParams.append("customerName", customerName);
+
+    const response = await axios.get(
+      `/animals/filter-all-animals?${queryParams.toString()}`
+    );
+    return response.data;
+  }
+);
+
 const animalsSlice = createSlice({
   name: "animals",
   initialState: {
     animals: [],
     customer: [],
     animalByid: null,
+    filteredAnimals: [],
     //   cattle: [],
     //   goast: [],
     //   pigs: [],
@@ -107,6 +158,9 @@ const animalsSlice = createSlice({
   reducers: {
     clearSearch: (state) => {
       state.customer = [];
+    },
+    clearId: (state) => {
+      state.animalByid = null;
     },
   },
   extraReducers(builders) {
@@ -173,6 +227,18 @@ const animalsSlice = createSlice({
         state.status.search = "failed";
         state.error = action.error.message;
       })
+      // search transaction cases
+      .addCase(searchTransaction.pending, (state) => {
+        state.status.search = "loading";
+      })
+      .addCase(searchTransaction.fulfilled, (state, action) => {
+        state.status.search = "succeeded";
+        state.animals = action.payload;
+      })
+      .addCase(searchTransaction.rejected, (state, action) => {
+        state.status.search = "failed";
+        state.error = action.error.message;
+      })
       // filter animal cases
       .addCase(filterAnimalsByType.pending, (state) => {
         state.status.filter = "loading";
@@ -220,6 +286,35 @@ const animalsSlice = createSlice({
       .addCase(filterByDateRange.rejected, (state, action) => {
         state.status.filter = "failed";
         state.error = action.error.message;
+      })
+      // update transaction cases
+      .addCase(updateTransaction.pending, (state) => {
+        state.status.filter = "loading";
+      })
+      .addCase(updateTransaction.fulfilled, (state, action) => {
+        state.status.animals = "succeeded";
+        state.animals = state.animals.map((animal) => {
+          if (animal.id === action.payload.id) {
+            return action.payload;
+          }
+          return animal;
+        });
+      })
+      .addCase(updateTransaction.rejected, (state, action) => {
+        state.status.filter = "failed";
+        state.error = action.error.message;
+      })
+      // filter all documents cases
+      .addCase(filterAllAnimals.pending, (state) => {
+        state.status.filter = "loading";
+      })
+      .addCase(filterAllAnimals.fulfilled, (state, action) => {
+        state.status.filter = "succeeded";
+        state.filteredAnimals = action.payload;
+      })
+      .addCase(filterAllAnimals.rejected, (state, action) => {
+        state.status.filter = "failed";
+        state.error = action.error.message;
       });
   },
 });
@@ -228,7 +323,9 @@ export const getAnimals = (state) => state.animals.animals;
 export const getAnimalById = (state) => state.animals.animalByid;
 export const getAnimalsStatus = (state) => state.animals.status;
 export const getCustomer = (state) => state.animals.customer;
+export const getFilteredAnimals = (state) => state.animals.filteredAnimals;
 
 export const { clearSearch } = animalsSlice.actions;
+export const { clearId } = animalsSlice.actions;
 
 export default animalsSlice.reducer;

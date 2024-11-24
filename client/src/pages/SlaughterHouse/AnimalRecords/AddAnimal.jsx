@@ -13,6 +13,8 @@ import {
 } from "../../../services/animalsSlice";
 import SuccessModal from "../../../components/SuccessModal";
 import transactionStatus from "../../../constants/transactionStatus";
+import io from "socket.io-client";
+const socket = io.connect(`${api.defaults.baseURL}`);
 
 const AddAnimal = ({ closeModal, fetchUpdate }) => {
   const dispatch = useDispatch();
@@ -48,7 +50,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
     "Healthy",
     "Lame (Lumpo)",
     "Injured",
-    "Infected",
+    // "Infected",
     "Undernourished/Thin",
   ];
 
@@ -155,6 +157,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
         fetchUpdate();
         // closeModal();
         dispatch(clearSearch());
+        socket.emit("add_animal", response.data);
       }
     } catch (error) {
       setLoading(false);
@@ -328,7 +331,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       }}
                       className={` ${
                         customerNameError ? "border-red-500" : "border-gray-300"
-                      } border-gray-300 border w-full text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
+                      } border-gray-300 py-2.5 border w-full text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
                       placeholder="Customer Name"
                     />
                     {customerList.length > 0 && (
@@ -408,7 +411,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           : "border-gray-300"
                       }               
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Customer Phone Number"
                     />
                     {customerPhoneError && (
@@ -436,7 +439,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       className={`border-gray-300 ${
                         animalTypeError ? "border-red-500" : "border-gray-300"
                       }
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                     >
                       <option value="">Select Animal Type</option>
                       <option value="Cattle">Cattle</option>
@@ -465,7 +468,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       className={`border-gray-300 ${
                         condtitionError ? "border-red-500" : "border-gray-300"
                       }
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                     >
                       <option value="">-- Choose a condition --</option>
                       {conditions.map((condition, index) => (
@@ -479,7 +482,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                         {condtitionError}
                       </span>
                     )}
-                    {data.condition === "Infected" && (
+                    {/* {data.condition.includes("Infected") && (
                       <input
                         type="text"
                         id="name"
@@ -490,9 +493,9 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           });
                         }}
                         placeholder="please specify"
-                        className=" mt-2 border-gray-300  bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                        className=" mt-2 border-gray-300 py-2.5 bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                       />
-                    )}
+                    )} */}
                   </div>
 
                   <div className="mt-5 flex gap-3 ">
@@ -515,7 +518,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                             : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                         placeholder="Animal Type"
                       />
                       {dateSlaughteredError && (
@@ -526,45 +529,31 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                     </div>
                     <div className="w-full">
                       <label
-                        htmlFor="name"
+                        htmlFor="weight"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Total Weight(Kg)
+                        Total Weight (Kg)
                       </label>
                       <input
                         type="number"
-                        id="name"
+                        id="weight"
                         onChange={(e) =>
                           setData({ ...data, weight: e.target.value })
                         }
                         value={data.weight}
-                        pattern="[0-9]*" // Only allows numbers
-                        inputMode="numeric" // Opens numeric keyboard on mobile
-                        onKeyDown={(e) => {
-                          if (
-                            e.key === "-" ||
-                            e.key === "e" ||
-                            e.key === "E" ||
-                            e.key === "+" ||
-                            e.key === "."
-                          ) {
-                            e.preventDefault(); // Prevent non-numeric characters
-                          }
-                        }}
+                        step="0.01" // Allows decimals up to two places
                         className={`${
                           weightError ? "border-red-500" : "border-gray-300"
-                        }
-    border-gray-300 
-    bg-gray-100 border w-full text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+                        } bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
                         placeholder="Weight"
                       />
-
                       {weightError && (
                         <span className="text-red-500 text-sm">
                           {weightError}
                         </span>
                       )}
                     </div>
+
                     <div className="w-full">
                       <label
                         htmlFor="name"
@@ -578,25 +567,15 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                         onChange={(e) =>
                           setData({ ...data, pricePerKg: e.target.value })
                         }
-                        pattern="[0-9]*" // Only allows numbers
-                        inputMode="numeric" // Opens numeric keyboard on mobile
-                        onKeyDown={(e) => {
-                          if (
-                            e.key === "-" ||
-                            e.key === "e" ||
-                            e.key === "E" ||
-                            e.key === "+" ||
-                            e.key === "."
-                          ) {
-                            e.preventDefault(); // Prevent non-numeric characters
-                          }
-                        }}
+                        // pattern="[0-9]*" // Only allows numbers
+                        // inputMode="numeric" // Opens numeric keyboard on mobile
+                        step="0.01" // Allows decimals up to two places
                         className={`
                         ${
                           pricePerKgError ? "border-red-500" : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full  py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                         placeholder="Price per(Kg)"
                       />
                       {pricePerKgError && (
@@ -639,7 +618,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           totalError ? "border-red-500" : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 cursor-not-allowed border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 cursor-not-allowed border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                         placeholder="Total Price"
                       />
                       {totalError && (
@@ -661,25 +640,26 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                         onChange={(e) =>
                           setData({ ...data, paidAmount: e.target.value })
                         }
-                        pattern="[0-9]*" // Only allows numbers
-                        inputMode="numeric" // Opens numeric keyboard on mobile
-                        onKeyDown={(e) => {
-                          if (
-                            e.key === "-" ||
-                            e.key === "e" ||
-                            e.key === "E" ||
-                            e.key === "+" ||
-                            e.key === "."
-                          ) {
-                            e.preventDefault(); // Prevent non-numeric characters
-                          }
-                        }}
+                        // pattern="[0-9]*" // Only allows numbers
+                        // inputMode="numeric" // Opens numeric keyboard on mobile
+                        // onKeyDown={(e) => {
+                        //   if (
+                        //     e.key === "-" ||
+                        //     e.key === "e" ||
+                        //     e.key === "E" ||
+                        //     e.key === "+" ||
+                        //     e.key === "."
+                        //   ) {
+                        //     e.preventDefault(); // Prevent non-numeric characters
+                        //   }
+                        // }}
+                        step="0.01" // Allows decimals up to two places
                         defaultValue={data.paidAmount}
                         className={` ${
                           paidAmountError ? "border-red-500" : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                         placeholder="Paid Amount"
                       />
                       {paidAmountError && (
@@ -720,7 +700,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           balanceError ? "border-red-500" : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 border w-full cursor-not-allowed text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 cursor-not-allowed text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                         placeholder="Balance"
                       />
                       {balanceError && (
@@ -764,13 +744,13 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                         dispatch(clearSearch());
                       }}
                       type="button"
-                      className="bg-gray-500 hover:bg-gray-700 text-white p-2 px-8 rounded-lg "
+                      className="bg-gray-500 py-2.5 hover:bg-gray-700 text-white p-2 px-8 rounded-lg "
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="bg-main hover:bg-main_hover text-white p-2 px-8 rounded-lg "
+                      className="bg-main py-2.5 hover:bg-main_hover text-white p-2 px-8 rounded-lg "
                     >
                       Add Animal
                     </button>

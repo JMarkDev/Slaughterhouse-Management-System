@@ -84,22 +84,22 @@ const Navbar = () => {
         dispatch(fetchNotificationById(userData.id));
       };
 
-      socket.on("success_upload", handleUploadSuccess);
-      socket.on("success_received", handleReceivedSuccess);
+      socket.on("success_add", handleSuccessAdd);
+      socket.on("success_notification", handleSuccessAdd);
     }
 
     // Clean up the socket connection and remove the event listener
     return () => {
-      socket.off("success_upload");
-      socket.off("success_received");
-      socket.disconnect();
+      socket.off("success_add");
+      socket.off("success_notification");
+      // socket.disconnect();
     };
   }, [dispatch, userData]);
 
   useEffect(() => {
     if (getNotification) {
       setNotifications(getNotification);
-      const unread = getNotification.filter(
+      const unread = getNotification?.filter(
         (notification) => notification.is_read === 0
       );
       setUnread(unread.length);
@@ -140,9 +140,12 @@ const Navbar = () => {
               <>
                 <li>
                   <div className="relative">
-                    <span className="text-sm absolute right-0 top-0 text-white bg-red-600 rounded-full px-1.5">
-                      {unread}
-                    </span>
+                    {unread > 0 && (
+                      <span className="text-sm absolute right-0 top-0 text-white bg-red-600 rounded-full px-1.5">
+                        {unread}
+                      </span>
+                    )}
+
                     <div
                       onClick={handleNotification}
                       onMouseEnter={handleNotification}

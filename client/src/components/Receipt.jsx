@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { getTransactionStatus } from "../utils/getTransactionStatus";
 
 const Receipt = ({ data, contentRef }) => (
   <div
@@ -70,7 +71,8 @@ const Receipt = ({ data, contentRef }) => (
           <strong>Balance:</strong> ₱{data?.transaction?.balance}
         </p>
         <p className={`text-gray-600`}>
-          <strong>Status:</strong> {data?.transaction?.status}
+          <strong>Status:</strong>{" "}
+          {getTransactionStatus(data?.transaction?.status)}
         </p>
       </div>
     </div>

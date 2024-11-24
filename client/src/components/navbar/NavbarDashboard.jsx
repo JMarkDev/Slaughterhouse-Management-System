@@ -39,22 +39,25 @@ const NavDashboard = ({ handleBurger }) => {
     "/admin-dashboard": "Admin Dashboard",
     "/dashboard": "Dashboard",
     "/user-management": "User Management",
-    "/user-profile": "Profile",
+    "/user-profile": "User Profile",
     "/slaughterhouse-records": "Slaughterhouse Records",
-    "/cattle": "Cattle",
-    "/pigs": "Pigs",
-    "/goats": "Goats",
+    "/cattle": "Animal Records",
+    "/pigs": "Animal Records",
+    "/goats": "Animal Records",
     "/city-admin": "City Admin",
-    "/slaughterhouse": "Slaughterhouse User",
     "/transaction": "Transactions",
     "/reports": "Reports",
 
     "/slaughterhouse-dashboard": "Slaughter Dashboard",
     "/slaughterhouse-transaction": "Transactions",
-    "/slaughterhouse-cattle": "Cattle",
-    "/slaughterhouse-pigs": "Pigs",
-    "/slaughterhouse-goats": "Goats",
-    "/slaughterhouse-reports": "Reports",
+    "/slaughterhouse-cattle": "Animal Records",
+    "/slaughterhouse-pigs": "Animal Records",
+    "/slaughterhouse-goats": "Animal Records",
+    "/slaughterhouse-reports": "Slaughterhouse Reports",
+
+    "/supervisor": "Supervisor List",
+    "/admin": "Admin List",
+    "/user-details": "User Details",
   };
 
   const handleNotification = () => {
@@ -67,7 +70,11 @@ const NavDashboard = ({ handleBurger }) => {
     setShowNotification(false);
   };
   const location = useLocation();
-  const title = pageTitles[location.pathname];
+  const pathname = location.pathname;
+  const matchedKey = Object.keys(pageTitles).find((key) =>
+    pathname.includes(key)
+  );
+  const title = pageTitles[matchedKey];
 
   useEffect(() => {
     if (userData) {
@@ -77,29 +84,22 @@ const NavDashboard = ({ handleBurger }) => {
 
   useEffect(() => {
     if (userData) {
-      const handleUploadSuccess = () => {
+      const handleSuccessAdd = () => {
         dispatch(fetchNotificationById(userData.id))
-          .unwrap() // Make sure the data is updated before proceeding
+          .unwrap()
           .then((newNotifications) => {
-            setNotifications(newNotifications); // Explicitly set new notifications
+            setNotifications(newNotifications);
           });
       };
 
-      const handleReceivedSuccess = () => {
-        dispatch(fetchNotificationById(userData.id))
-          .unwrap() // Make sure the data is updated before proceeding
-          .then((newNotifications) => {
-            setNotifications(newNotifications); // Explicitly set new notifications
-          });
-      };
-      socket.on("success_upload", handleUploadSuccess);
-      socket.on("success_received", handleReceivedSuccess);
+      socket.on("success_add", handleSuccessAdd);
+      socket.on("success_notification", handleSuccessAdd);
     }
 
     // Clean up the socket connection and remove the event listener
     return () => {
-      socket.off("success_upload");
-      socket.off("success_received");
+      socket.off("success_add");
+      socket.off("success_notification");
       // socket.disconnect();
     };
   }, [dispatch, userData]);
@@ -134,9 +134,12 @@ const NavDashboard = ({ handleBurger }) => {
         <h1 className="md:text-2xl text-lg font-bold text-main">{title}</h1>
         <div className="flex lg:text-[16px] text-sm gap-4">
           <div className="relative  flex items-center">
-            <span className="text-sm  px-1.5 absolute right-[-10px] top-0 text-white bg-red-600 rounded-full text-center">
-              {unread}
-            </span>
+            {unread > 0 && (
+              <span className="text-sm  px-1.5 absolute right-[-10px] top-0 text-white bg-red-600 rounded-full text-center">
+                {unread}
+              </span>
+            )}
+
             <button
               onClick={handleNotification}
               onMouseEnter={handleNotification}

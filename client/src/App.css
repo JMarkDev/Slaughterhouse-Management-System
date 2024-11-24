@@ -22,6 +22,10 @@
     margin: 0 auto;
     margin-top: 20px;
   }
+
+  .demand_letter {
+    margin: 32px;
+  }
 }
 
 .text-wmsu {

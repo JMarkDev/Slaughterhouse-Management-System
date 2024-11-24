@@ -30,7 +30,7 @@ const Sidebar = ({ sidebar, handleBurger }) => {
   const adminLinks = [
     { title: "Dashboard", path: "/admin-dashboard", src: <RiPieChart2Fill /> },
     {
-      title: "Transaction",
+      title: "All Transaction",
       path: "/transaction",
       src: <TbTransactionDollar />,
     },
@@ -70,13 +70,8 @@ const Sidebar = ({ sidebar, handleBurger }) => {
     },
     {
       title: "Animal Records",
-      path: "/",
+      path: "/animal-records",
       src: <HiOutlineClipboardDocumentList />,
-      sublinks: [
-        { title: "Cattle", path: "/slaughterhouse-cattle" },
-        { title: "Pigs", path: "/slaughterhouse-pigs" },
-        { title: "Goats", path: "/slaughterhouse-goats" },
-      ],
     },
     {
       title: "Transaction",
@@ -165,7 +160,7 @@ const Sidebar = ({ sidebar, handleBurger }) => {
                               to={submenu.path}
                               className={`${
                                 location.pathname === submenu.path &&
-                                "bg-main text-white"
+                                "bg-green-800 text-white"
                               } flex items-center p-2 text-white rounded-lg  hover:text-white hover:bg-green-800 dark:hover:bg-gray-700 group`}
                             >
                               {submenu.title}
@@ -180,7 +175,8 @@ const Sidebar = ({ sidebar, handleBurger }) => {
                     // onClick={handleLogout}
                     to={menu.path}
                     className={`${
-                      location.pathname === menu.path && "bg-main text-white"
+                      location.pathname === menu.path &&
+                      "bg-green-800 text-white"
                     } flex items-center p-2 text-nowrap  rounded-lg text-white hover:text-white hover:bg-green-800 dark:hover:bg-gray-700 group`}
                   >
                     <span className="text-2xl">{menu.src}</span>

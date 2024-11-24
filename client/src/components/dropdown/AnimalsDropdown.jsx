@@ -8,19 +8,12 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import PropTypes from "prop-types";
-// import { getBgColor } from "../../utils/animalBgStatus";
-import transactionStatus from "../../constants/transactionStatus";
-import { getTransactionStatus } from "../../utils/getTransactionStatus";
 
-export default function Dropdown({ handleFilter }) {
-  const [selectOption, setSelectOption] = useState("Filter by status");
+export default function AnimalDropdown({ handleFilter }) {
+  const [selectOption, setSelectOption] = useState("Filter by animal type");
 
   const handleOption = (option) => {
-    if (option === "Default") {
-      setSelectOption("Filter by status");
-    } else {
-      setSelectOption(getTransactionStatus(option));
-    }
+    setSelectOption(option);
     handleFilter(option);
   };
 
@@ -46,34 +39,34 @@ export default function Dropdown({ handleFilter }) {
           >
             <MenuItem>
               <button
-                onClick={() => handleOption("Default")}
+                onClick={() => handleOption("All")}
                 className={` group  flex w-full hover:bg-gray-300 items-center justify-start gap-2 rounded-lg py-1.5 px-3 `}
               >
-                Default
+                All
               </button>
             </MenuItem>
             <MenuItem>
               <button
-                onClick={() => handleOption(transactionStatus.unpaid)}
+                onClick={() => handleOption("Cattle")}
                 className={` group  flex w-full hover:bg-gray-300 items-center justify-start gap-2 rounded-lg py-1.5 px-3 `}
               >
-                Unpaid
+                Cattle
               </button>
             </MenuItem>
             <MenuItem>
               <button
-                onClick={() => handleOption(transactionStatus.partial)}
+                onClick={() => handleOption("Pigs")}
                 className="group flex w-full hover:bg-gray-300 items-center justify-start gap-2 rounded-lg py-1.5 px-3 "
               >
-                Partial
+                Pigs
               </button>
             </MenuItem>
             <MenuItem>
               <button
-                onClick={() => handleOption(transactionStatus.paid)}
+                onClick={() => handleOption("Goats")}
                 className="group flex w-full hover:bg-gray-300 items-center justify-start gap-2 rounded-lg py-1.5 px-3 "
               >
-                Paid
+                Goats
               </button>
             </MenuItem>
           </MenuItems>
@@ -83,6 +76,6 @@ export default function Dropdown({ handleFilter }) {
   );
 }
 
-Dropdown.propTypes = {
+AnimalDropdown.propTypes = {
   handleFilter: PropTypes.func.isRequired,
 };

@@ -30,7 +30,7 @@ export default function App({ data }) {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto shadow-xl">
       <div style={{ minWidth: "800px" }}>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart width={800} height={400} data={transformedData}>

@@ -17,18 +17,18 @@ const Notification = ({ notifications, handleNotificationClick }) => {
             <li className="p-4 text-sm text-gray-700">No notifications</li>
           )}
           {notifications?.map(
-            ({ content, createdAt, is_read, document_id, id }) => (
+            ({ message, createdAt, is_read, transactionId, id }) => (
               <li
                 key={id}
                 onClick={() => {
                   handleNotificationClick(id);
-                  navigate(`/document-details/${document_id}`);
+                  navigate(`/transaction/${transactionId}`);
                 }}
                 className={`border-b border-gray-300 ${
                   is_read === 1 ? "bg-white" : "bg-gray-200"
                 }  hover:bg-gray-200 cursor-pointer p-4 text-sm`}
               >
-                <p className="font-semibold text-gray-700">{content}</p>
+                <p className="font-semibold text-gray-700">{message}</p>
                 <p className="text-gray-500 border-gray-300 text-sm">
                   {dateFormat(createdAt)}
                 </p>

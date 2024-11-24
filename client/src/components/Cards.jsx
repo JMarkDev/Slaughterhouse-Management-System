@@ -28,7 +28,7 @@ const Cards = ({ data }) => {
           <h1 className="font-bold py-1 w-full text-center text-sm xl:text-lg   whitespace-nowrap text-main rounded-md">
             {card.title}
           </h1>
-          <h1 className=" font-bold lg:text-4xl md:text-2xl text-xl text-[#4e4e50]">
+          <h1 className=" font-bold lg:text-2xl text-xl text-[#4e4e50]">
             {card.value}
           </h1>
         </div>

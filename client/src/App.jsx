@@ -2,7 +2,6 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import rolesList from "./constants/rolesList";
-// import { UseAutoLogout } from "./hooks/UseAutoLogout";
 
 import ProtectedRoute from "./route/ProtectedRoute";
 import PageNotFound from "./pages/PageNotFound";
@@ -20,20 +19,27 @@ import Goats from "./pages/Admin/AnimalRecords/Goats/Goats";
 
 import CityAdmin from "./pages/Admin/UserManagement/CityAdmin/CityAdmin";
 import SlaughterhouseUser from "./pages/Admin/UserManagement/Slaughterhouse/SlaughterhouseUsers";
-
 import SlaughterhouseRecords from "./pages/Admin/SlaughterhouseRecords/SlaughterhouseRecords";
+import Records from "./pages/Admin/SlaughterhouseRecords/Records";
+import SlaughterTransaction from "./pages/SlaughterHouse/Transaction/SlaughterTransaction";
 import Reports from "./pages/Admin/Reports/Reports";
+import TransactionDetails from "./pages/Shared/TransactionDetails";
+import AnimalRecords from "./pages/SlaughterHouse/AnimalRecords/AnimalRecords";
+import SlaughterHouseReport from "./pages/SlaughterHouse/Reports/SlaughterReports";
+import SlaughterDashboard from "./pages/SlaughterHouse/Dashboard/SlaughterDashboard";
 
 function App() {
-  // logout user after 30 minutes of inactivity
-  // UseAutoLogout();
-
   const adminLinks = [
     { title: "Dashboard", path: "/admin-dashboard", component: <Dashboard /> },
     {
       title: "Slaughterhouse",
       path: "/slaughterhouse-records",
       component: <SlaughterhouseRecords />,
+    },
+    {
+      title: "Records",
+      path: "/slaughterhouse-records/:id",
+      component: <Records />,
     },
     { title: "Transaction", path: "/transaction", component: <Transaction /> },
     { title: "Cattle", path: "/cattle", component: <Cattle /> },
@@ -52,20 +58,22 @@ function App() {
     {
       title: "Dashboard",
       path: "/slaughterhouse-dashboard",
-      component: <Dashboard />,
+      component: <SlaughterDashboard />,
     },
     {
       title: "Transaction",
       path: "/slaughterhouse-transaction",
-      component: <Transaction />,
+      component: <SlaughterTransaction />,
     },
-    { title: "Cattle", path: "/slaughterhouse-cattle", component: <Cattle /> },
-    { title: "Pigs", path: "/slaughterhouse-pigs", component: <Pigs /> },
-    { title: "Goats", path: "/slaughterhouse-goats", component: <Goats /> },
+    {
+      title: "Animal Records",
+      path: "/animal-records",
+      component: <AnimalRecords />,
+    },
     {
       title: "Reports",
       path: "/slaughterhouse-reports",
-      component: <Reports />,
+      component: <SlaughterHouseReport />,
     },
   ];
 
@@ -79,6 +87,11 @@ function App() {
       title: "User Details",
       path: "/user-details/:id",
       component: <UserDetails />,
+    },
+    {
+      title: "Transaction",
+      path: "/transaction/:id",
+      component: <TransactionDetails />,
     },
   ];
 

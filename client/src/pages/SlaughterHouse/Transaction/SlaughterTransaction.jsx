@@ -27,21 +27,6 @@ const SlaughterTransaction = () => {
   const [status, setStatus] = useState(null);
 
   const dataPerPage = 5;
-
-  // useEffect(() => {
-  //   if (searchTerm) {
-  //     dispatch(
-  //       searchTransaction({
-  //         name: searchTerm,
-  //         type: "",
-  //         slaughterhouseId: user?.id,
-  //       })
-  //     );
-  //   } else {
-  //     dispatch(getTransactionBySlaughterhouse(user?.id));
-  //   }
-  // }, [dispatch, searchTerm, user]);
-
   useEffect(() => {
     dispatch(
       filterAllAnimals({
@@ -76,11 +61,6 @@ const SlaughterTransaction = () => {
 
   const handleFilter = (status) => {
     setStatus(status);
-    // if (status === "Default") {
-    //   dispatch(getTransactionBySlaughterhouse(user?.id));
-    //   return;
-    // }
-    // dispatch(filterByStatus({ status: status, slaughterhouseId: user?.id }));
   };
 
   const handleFilterByAnimal = (animal) => {
@@ -89,18 +69,7 @@ const SlaughterTransaction = () => {
     } else {
       setAnimalType(animal);
     }
-    // if (animal === "Default") {
-    //   dispatch(getTransactionBySlaughterhouse(user?.id));
-    //   return;
-    // }
-    // dispatch(filterAnimalsByType({ type: animal, slaughterhouseId: user?.id }));
   };
-
-  // const handleFilterByDate = () => {
-  //   dispatch(
-  //     filterByDateRange({ startDate, endDate, slaughterhouseId: user?.id })
-  //   );
-  // };
 
   // Paganation
   const indexOfLastDocument = currentPage * dataPerPage;
@@ -132,53 +101,6 @@ const SlaughterTransaction = () => {
             <Dropdown handleFilter={handleFilter} />
           </div>
         </div>
-        {/* <div className="flex justify-end gap-3 items-center">
-          <div className="flex flex-col  md:w-1/3">
-            <div className="relative ">
-              <input
-                type="date"
-                id="from_date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className={`border-blue-500 
-                           block  w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
-                placeholder=" "
-              />
-              <label
-                htmlFor="from_date"
-                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >
-                From
-              </label>
-            </div>
-          </div>
-          <div className="flex flex-col  md:w-1/3">
-            <div className="relative ">
-              <input
-                type="date"
-                id="to_date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className={`border-blue-500 
-                           block  w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
-                placeholder=" "
-              />
-              <label
-                htmlFor="to_date"
-                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >
-                To
-              </label>
-            </div>
-          </div>
-
-          <button
-            onClick={handleFilterByDate}
-            className="bg-blue-500 hover:bg-blue-700 text-white text-sm text-nowrap px-2 mr-0 py-2 rounded-lg"
-          >
-            Filter by Date
-          </button>
-        </div> */}
       </div>
       <div className="mt-8">
         <TransactionTable animalsList={currentData} fetchUpdate={fetchUpdate} />

@@ -216,7 +216,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                     className={`border-gray-300 ${
                       animalTypeError ? "border-red-500" : "border-gray-300"
                     }
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                   >
                     <option value="">Select Animal Type</option>
                     <option value="Cattle">Cattle</option>
@@ -251,7 +251,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                           : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Animal Type"
                     />
                     {dateSlaughteredError && (
@@ -291,7 +291,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                         weightError ? "border-red-500" : "border-gray-300"
                       }
     border-gray-300 
-    bg-gray-100 border w-full text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+    bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Weight"
                     />
 
@@ -333,7 +333,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                           pricePerKgError ? "border-red-500" : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Price per(Kg)"
                     />
                     {pricePerKgError && (
@@ -376,7 +376,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                         totalError ? "border-red-500" : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 cursor-not-allowed border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 cursor-not-allowed border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Total Price"
                     />
                     {totalError && (
@@ -414,7 +414,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                         paidAmountError ? "border-red-500" : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Paid Amount"
                     />
                     {paidAmountError && (
@@ -455,7 +455,7 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                         balanceError ? "border-red-500" : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 border w-full cursor-not-allowed text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 cursor-not-allowed text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Balance"
                     />
                     {balanceError && (
@@ -472,13 +472,13 @@ const EditTransaction = ({ modal, closeModal, fetchUpdate, id }) => {
                       dispatch(clearSearch());
                     }}
                     type="button"
-                    className="bg-gray-500 hover:bg-gray-700 text-white p-2 px-8 rounded-lg "
+                    className="bg-gray-500 py-2.5 hover:bg-gray-700 text-white p-2 px-8 rounded-lg "
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-main hover:bg-main_hover text-white p-2 px-8 rounded-lg "
+                    className="bg-main py-2.5 hover:bg-main_hover text-white p-2 px-8 rounded-lg "
                   >
                     Update Transaction
                   </button>

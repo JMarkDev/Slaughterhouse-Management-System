@@ -3,11 +3,11 @@ import api from "../../api/axios";
 import { useState } from "react";
 import { useToast } from "../../hooks/useToast";
 import LoginLoading from "../../components/loader/loginloader/LoginLoading";
-import { fetchOffice } from "../../services/usersSlice";
-import { useDispatch } from "react-redux";
+// import { fetchOffice } from "../../services/usersSlice";
+// import { useDispatch } from "react-redux";
 
 const ChangeEmail = ({ modal, closeModal, id, handleUpdateEmail }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const toast = useToast();
   const [email, setEmail] = useState("");
   const [otp, setOTP] = useState("");
@@ -55,14 +55,16 @@ const ChangeEmail = ({ modal, closeModal, id, handleUpdateEmail }) => {
 
       if (response.data.status === "success") {
         toast.success(response.data.message);
-        dispatch(fetchOffice());
+        // dispatch(fetchOffice());
       }
       setTimeout(() => {
         closeModal(false);
       }, 1000);
+      handleUpdateEmail();
       setLoader(false);
     } catch (error) {
       setLoader(false);
+      setOtpError(error.response.data.message);
       if (error.response.data.status === "error") {
         setOtpError(error.response.data.message);
       } else if (error.response.data.errors) {
@@ -162,7 +164,7 @@ const ChangeEmail = ({ modal, closeModal, id, handleUpdateEmail }) => {
                 <div className="text-red-600 text-sm">{otpError}</div>
               )}
               <button
-                className={`w-full bg-indigo-500 text-white px-4 py-2 mt-8 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600 
+                className={`w-full bg-main text-white px-4 py-2 mt-8 rounded-md hover:bg-main focus:outline-none focus:bg-main
             ${submitDisable ? "opacity-50 cursor-not-allowed" : ""}
             `}
                 disabled={submitDisable}
@@ -184,6 +186,7 @@ ChangeEmail.propTypes = {
   closeModal: PropTypes.func,
   id: PropTypes.number,
   handleUpdateEmail: PropTypes.func,
+  fetchUpdate: PropTypes.func,
 };
 
 export default ChangeEmail;

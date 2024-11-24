@@ -43,9 +43,7 @@ const UserProfile = () => {
     email: "",
     role: "",
     contactNumber: "",
-    designation: "",
-    esuCampus: "",
-    office: "",
+    address: "",
   });
 
   const id = userData?.id;
@@ -66,11 +64,8 @@ const UserProfile = () => {
       setValue("middleInitial", userData.middleInitial);
       setValue("lastName", userData.lastName);
       setValue("email", userData.email);
-      setValue("birthDate", userData.birthDate);
       setValue("contactNumber", userData.contactNumber);
-      setValue("designation", userData.designation);
-      setValue("esuCampus", userData.esuCampus);
-      setValue("officeName", userData.office?.officeName);
+      setValue("address", userData.address);
       if (userData.image) {
         setProfilePic(`${api.defaults.baseURL}${userData.image}`);
       }
@@ -84,11 +79,8 @@ const UserProfile = () => {
     formData.append("lastName", data.lastName);
     formData.append("middleInitial", data.middleInitial);
     formData.append("email", data.email);
-    formData.append("birthDate", data.birthDate);
     formData.append("contactNumber", data.contactNumber);
-    formData.append("designation", data.designation);
-    if (data.officeName) formData.append("officeName", data.officeName);
-    if (data.esuCampus) formData.append("esuCampus", data.esuCampus);
+    formData.append("address", data.address);
     formData.append("image", data.image); // Append the file
 
     try {
@@ -216,7 +208,16 @@ const UserProfile = () => {
             >
               Profile info
             </li>
-
+            <li
+              className={`cursor-pointer text-sm text-nowrap px-2 py-1 rounded-md ${
+                activeTab === "update"
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-blue-600 hover:text-white"
+              }`}
+              onClick={() => setActiveTab("update")}
+            >
+              Change email
+            </li>
             <li
               className={`cursor-pointer  text-sm text-nowrap px-2 py-1 rounded-md  ${
                 activeTab === "password"
@@ -297,6 +298,20 @@ const UserProfile = () => {
                   </label>
                   <input
                     {...register("email")}
+                    className="rounded-lg border cursor-not-allowed bg-gray-200 border-gray-200 flex-grow p-2 text-sm border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    type="text"
+                    disabled={true}
+                  />
+                </div>
+                <div className="flex items-center gap-5">
+                  <label
+                    htmlFor=""
+                    className="text-md font-semibold text-gray-700 w-1/4"
+                  >
+                    Address
+                  </label>
+                  <input
+                    {...register("address")}
                     className="rounded-lg border  bg-gray-200 border-gray-200 flex-grow p-2 text-sm border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     type="text"
                     disabled={edit ? true : false}
@@ -321,6 +336,68 @@ const UserProfile = () => {
                       Save Profile
                     </button>
                   )}
+                </div>
+              </div>
+            )}
+            {activeTab === "update" && (
+              <div>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-5">
+                    <label
+                      htmlFor=""
+                      className="text-md font-semibold text-gray-700 w-1/4" // Adjust this width as needed
+                    >
+                      New email
+                    </label>
+                    <input
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      className={`rounded-lg focus:ring-blue-500 focus:border-blue-100 border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm`}
+                      type="text"
+                      placeholder="Enter new email"
+                    />
+                  </div>
+
+                  <div className="flex items-center relative gap-5">
+                    <label
+                      htmlFor=""
+                      className="text-md font-semibold text-gray-700 w-1/4" // Adjust this width as needed
+                    >
+                      OTP
+                    </label>
+                    <input
+                      onChange={(e) => setOTP(e.target.value)}
+                      className="rounded-lg focus:ring-blue-500 focus:border-blue-100 border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
+                      type="text"
+                      placeholder="Enter 4 digits OTP"
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
+                    {/* <button
+                      onClick={handleSendOTP}
+                      type="button"
+                      className="text-[#1A9CE7] text-sm absolute right-5"
+                    >
+                      SEND
+                    </button> */}
+                    {sendOtp ? (
+                      <button
+                        type="button"
+                        onClick={handleSendOTP}
+                        className="w-fit mt-4 bg-blue-500 hover:bg-blue-700 text-white text-nowrap px-4 rounded-lg p-2 cursor-pointer"
+                      >
+                        Send code
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleChangeUsername}
+                        className=" w-fit mt-4 bg-blue-500 hover:bg-blue-700 text-white text-nowrap px-4 rounded-lg p-2"
+                      >
+                        Verify code
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

@@ -7,12 +7,8 @@ import {
 } from "../../services/usersSlice";
 import { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import { getUserRole } from "../../utils/userRoles";
-import { useFormat } from "../../hooks/useFormatDate";
-import Back from "../../components/buttons/Back";
 
 const UserProfile = () => {
-  const { fullDateFormat } = useFormat();
   const { id } = useParams();
   const dispatch = useDispatch();
   const user = useSelector(getFetchedUserById);
@@ -24,13 +20,10 @@ const UserProfile = () => {
     firstName: "",
     middleInitial: "",
     lastName: "",
-    birthDate: "",
     email: "",
     role: "",
     contactNumber: "",
-    designation: "",
-    esuCampus: "",
-    office: "",
+    address: "",
   });
 
   useEffect(() => {
@@ -71,23 +64,34 @@ const UserProfile = () => {
         <div className="flex flex-col flex-grow md:border md:border-gray-300 md:shadow-lg rounded-lg">
           <div className="py-6  md:px-4 text-gray-600">
             <div className="flex flex-col gap-3">
-              {data.office?.officeName && (
-                <div className="flex items-center gap-5">
-                  <label
-                    htmlFor=""
-                    className="text-md font-semibold text-gray-700 w-1/4" // Adjust this width as needed
-                  >
-                    Office name
-                  </label>
-                  <input
-                    className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
-                    type="text"
-                    disabled={true}
-                    value={data.office?.officeName || ""}
-                  />
-                </div>
-              )}
-
+              <div className="flex items-center gap-5">
+                <label
+                  htmlFor=""
+                  className="text-md font-semibold text-gray-700 w-1/4"
+                >
+                  First name
+                </label>
+                <input
+                  className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
+                  type="text"
+                  disabled={true}
+                  value={`${data?.firstName || ""}`}
+                />
+              </div>
+              <div className="flex items-center gap-5">
+                <label
+                  htmlFor=""
+                  className="text-md font-semibold text-gray-700 w-1/4"
+                >
+                  Last name
+                </label>
+                <input
+                  className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
+                  type="text"
+                  disabled={true}
+                  value={`${data?.lastName || ""}`}
+                />
+              </div>
               <div className="flex items-center gap-5">
                 <label
                   htmlFor=""
@@ -99,37 +103,7 @@ const UserProfile = () => {
                   className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
                   type="text"
                   disabled={true}
-                  value={`${data?.firstName || ""} ${
-                    data?.middleInitial || ""
-                  }. ${data?.lastName || ""}`}
-                />
-              </div>
-              <div className="flex items-center gap-5">
-                <label
-                  htmlFor=""
-                  className="text-md font-semibold text-gray-700 w-1/4"
-                >
-                  Email
-                </label>
-                <input
-                  className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
-                  type="text"
-                  disabled={true}
-                  value={data?.email || ""}
-                />
-              </div>
-              <div className="flex items-center gap-5">
-                <label
-                  htmlFor=""
-                  className="text-md font-semibold text-gray-700 w-1/4"
-                >
-                  Date of birth
-                </label>
-                <input
-                  className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
-                  type="text"
-                  disabled={true}
-                  defaultValue={fullDateFormat(data?.birthDate || "")}
+                  value={`${data?.middleInitial || ""}`}
                 />
               </div>
               <div className="flex items-center gap-5">
@@ -151,31 +125,29 @@ const UserProfile = () => {
                   htmlFor=""
                   className="text-md font-semibold text-gray-700 w-1/4"
                 >
-                  Designation
+                  Email
                 </label>
                 <input
                   className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
                   type="text"
                   disabled={true}
-                  value={data?.designation || ""}
+                  value={data?.email || ""}
                 />
               </div>
-              {data?.esuCampus && (
-                <div className="flex items-center gap-5">
-                  <label
-                    htmlFor=""
-                    className="text-md font-semibold text-gray-700 w-1/4"
-                  >
-                    ESU Campus
-                  </label>
-                  <input
-                    className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
-                    type="text"
-                    disabled={true}
-                    value={data?.esuCampus || ""}
-                  />
-                </div>
-              )}
+              <div className="flex items-center gap-5">
+                <label
+                  htmlFor=""
+                  className="text-md font-semibold text-gray-700 w-1/4"
+                >
+                  Address
+                </label>
+                <input
+                  className="rounded-lg border-2 bg-gray-200 border-gray-200 flex-grow p-2 text-sm"
+                  type="text"
+                  disabled={true}
+                  value={data?.address || ""}
+                />
+              </div>
             </div>
           </div>
         </div>

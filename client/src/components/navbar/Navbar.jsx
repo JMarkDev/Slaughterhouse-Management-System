@@ -76,16 +76,16 @@ const Navbar = () => {
 
   useEffect(() => {
     if (userData) {
-      const handleUploadSuccess = () => {
+      const handleAddSuccess = () => {
         dispatch(fetchNotificationById(userData.id));
       };
 
-      const handleReceivedSuccess = () => {
-        dispatch(fetchNotificationById(userData.id));
-      };
+      // const handleReceivedSuccess = () => {
+      //   dispatch(fetchNotificationById(userData.id));
+      // };
 
-      socket.on("success_add", handleSuccessAdd);
-      socket.on("success_notification", handleSuccessAdd);
+      socket.on("success_add", handleAddSuccess);
+      socket.on("success_notification", handleAddSuccess);
     }
 
     // Clean up the socket connection and remove the event listener

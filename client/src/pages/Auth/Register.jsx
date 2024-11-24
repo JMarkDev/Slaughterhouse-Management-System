@@ -8,6 +8,7 @@ import { useToast } from "../../hooks/useToast";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import rolesList from "../../constants/rolesList";
 import VerifyOTP from "../Verification/VerifyOTP";
+import LocationInput from "../../components/Location";
 
 const Register = ({ modal, closeModal, openLogin }) => {
   // const navigate = useNavigate();
@@ -25,12 +26,19 @@ const Register = ({ modal, closeModal, openLogin }) => {
   const [middleInitialError, setMiddleInitialError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [contactError, setContactError] = useState("");
+  const [customerAddressError, setCustomerAddressError] = useState("");
+  const [location, setLocation] = useState("");
+
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmpasswordError] = useState("");
 
+  const handleLocationChange = (location) => {
+    setLocation(location);
+  };
+
   const onSubmit = async (data) => {
     setEmail(data.email);
-    data.role = rolesList.slaughterhouse;
+    data.role = rolesList.supervisor;
     setLoading(true);
 
     setFirstnameError("");
@@ -38,6 +46,7 @@ const Register = ({ modal, closeModal, openLogin }) => {
     setMiddleInitialError("");
     setEmailError("");
     setContactError("");
+    setCustomerAddressError("");
     setPasswordError("");
     setConfirmpasswordError("");
 
@@ -50,12 +59,13 @@ const Register = ({ modal, closeModal, openLogin }) => {
       formData.append("birthDate", data.birthDate);
       formData.append("contactNumber", data.contactNumber);
       formData.append("role", data.role);
+      formData.append("address", location);
       formData.append("password", data.password);
       formData.append("confirmPassword", data.confirmPassword);
       formData.append("image", data.image); // Append the file
 
       const response = await api.post("/auth/register", formData);
-      console.log(response.data);
+
       if (response.data.status === "success") {
         toast.success(response.data.message);
         setLoading(false);
@@ -80,6 +90,9 @@ const Register = ({ modal, closeModal, openLogin }) => {
               break;
             case "contactNumber":
               setContactError(error.msg);
+              break;
+            case "address":
+              setCustomerAddressError(error.msg);
               break;
             case "password":
               setPasswordError(error.msg);
@@ -216,13 +229,27 @@ const Register = ({ modal, closeModal, openLogin }) => {
                           {...register("middleInitial")}
                           type="text"
                           id="middle_initial"
+                          maxLength={1}
+                          onKeyDown={(e) => {
+                            // Prevent certain symbols
+                            if (["-", "+", "."].includes(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
+                          onChange={(e) => {
+                            // Ensure only one character, and convert to uppercase
+                            e.target.value = e.target.value
+                              .slice(0, 1)
+                              .toUpperCase();
+                          }}
                           className={`${
                             middleInitialError
-                              ? "border-red-500 "
-                              : "border-gray-300 "
-                          } block pb-2 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } block pb-2 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
                           placeholder=" "
                         />
+
                         <label
                           htmlFor="middle_initial"
                           className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
@@ -266,11 +293,24 @@ const Register = ({ modal, closeModal, openLogin }) => {
                           {...register("contactNumber")}
                           type="number"
                           id="contact_number"
+                          maxLength={11}
+                          onKeyDown={(e) => {
+                            // Prevent non-numeric characters and certain symbols
+                            if (["-", "e", "E", "+", "."].includes(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
+                          onChange={(e) => {
+                            // Limit input to 11 characters
+                            if (e.target.value.length > 11) {
+                              e.target.value = e.target.value.slice(0, 11);
+                            }
+                          }}
                           className={`${
                             contactError
                               ? "border-red-500 "
                               : "border-gray-300 "
-                          } block pb-2 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
+                          }  block pb-2 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
                           placeholder=" "
                         />
                         <label
@@ -284,6 +324,25 @@ const Register = ({ modal, closeModal, openLogin }) => {
                         <span className="text-red-500">{contactError}</span>
                       )}
                     </div>
+                  </div>
+
+                  <div className="mt-4 relative">
+                    {/* <label
+                      htmlFor="name"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Address
+                    </label> */}
+                    <LocationInput
+                      location={location}
+                      customerAddressError={customerAddressError}
+                      onLocationChange={handleLocationChange}
+                    />
+                    {customerAddressError && (
+                      <span className="text-red-500 text-sm">
+                        {customerAddressError}
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex flex-col">

@@ -40,8 +40,6 @@ const Login = ({ modal, closeModal, openRegister }) => {
         headers: { "Content-Type": "application/json" },
       });
 
-      console.log(response.data);
-
       if (response.data.status === "success") {
         const accessToken = response.data?.accessToken;
 

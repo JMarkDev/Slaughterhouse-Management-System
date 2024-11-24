@@ -23,6 +23,12 @@ const addAnimal = async (req, res) => {
   } = req.body;
 
   try {
+    // Format numeric fields to two decimal places
+    const formattedPricePerKg = parseFloat(pricePerKg).toFixed(2);
+    const formattedTotal = parseFloat(total).toFixed(2);
+    const formattedPaidAmount = parseFloat(paidAmount).toFixed(2);
+    const formattedBalance = parseFloat(balance).toFixed(2);
+
     const createdAt = new Date();
     const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss");
 
@@ -44,8 +50,8 @@ const addAnimal = async (req, res) => {
     const newTransaction = await transactionModel.create({
       id: transaction,
       transactionId: transaction,
-      amountPaid: paidAmount,
-      balance: balance,
+      amountPaid: formattedPaidAmount,
+      balance: formattedBalance,
       status: status,
       createdAt: sequelize.literal(`'${formattedDate}'`),
     });
@@ -55,8 +61,8 @@ const addAnimal = async (req, res) => {
       type: type,
       condition: condition,
       weight: weight,
-      pricePerKg: pricePerKg,
-      total: total,
+      pricePerKg: formattedPricePerKg,
+      total: formattedTotal,
       slaughterDate: slaughterDate,
       slaughterhouseId: slaughterhouseId,
       transactionId: transaction,
@@ -516,7 +522,7 @@ const filterAllAnimals = async (req, res) => {
       }
     : {};
 
-  if (slaughterhouseId) {
+  if (slaughterhouseId && slaughterhouseId !== "All") {
     whereConditions.slaughterhouseId = slaughterhouseId;
   }
 

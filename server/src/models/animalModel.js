@@ -24,11 +24,11 @@ const Animal = sequelize.define(
       allowNull: false,
     },
     pricePerKg: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
     total: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
     slaughterDate: {

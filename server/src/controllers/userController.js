@@ -222,9 +222,11 @@ const updatePassword = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   const { id } = req.params;
-  const { image, firstName, lastName, middleInitial, contactNumber } = req.body;
+  const { image, firstName, lastName, middleInitial, contactNumber, address } =
+    req.body;
 
   try {
+    const user = await userModel.findOne({ where: { id } });
     // upload image
     let newFileName = null;
     if (req.file) {
@@ -242,11 +244,12 @@ const updateProfile = async (req, res) => {
 
     await userModel.update(
       {
-        image: newFileName ? `/uploads/${newFileName}` : image,
+        image: newFileName ? `/uploads/${newFileName}` : user.image,
         firstName: firstName,
         lastName: lastName,
         middleInitial: middleInitial,
         contactNumber: contactNumber,
+        address: address,
         updatedAt: createdAt,
       },
       {

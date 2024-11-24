@@ -124,7 +124,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
     "Healthy",
     "Lame (Lumpo)",
     "Injured",
-    "Infected",
+    // "Infected",
     "Undernourished/Thin",
   ];
 
@@ -288,7 +288,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                     }}
                     className={` ${
                       customerNameError ? "border-red-500" : "border-gray-300"
-                    } border-gray-300 border w-full text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
+                    } border-gray-300 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
                     placeholder="Customer Name"
                   />
                   {customerList.length > 0 && (
@@ -372,7 +372,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         : ""
                     }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                     placeholder="Customer Phone Number"
                   />
                   {customerPhoneError && (
@@ -399,7 +399,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                     className={`border-gray-300 ${
                       animalTypeError ? "border-red-500" : "border-gray-300"
                     }
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                   >
                     <option value="">Select Animal Type</option>
                     <option value="Cattle">Cattle</option>
@@ -429,7 +429,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                     className={`border-gray-300 ${
                       condtitionError ? "border-red-500" : "border-gray-300"
                     }
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                   >
                     <option value="">-- Choose a condition --</option>
                     {conditions.map((condition, index) => (
@@ -443,7 +443,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                       {condtitionError}
                     </span>
                   )}
-                  {data.condition === "Infected" && (
+                  {/* {data.condition === "Infected" && (
                     <input
                       type="text"
                       id="name"
@@ -454,9 +454,9 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         });
                       }}
                       placeholder="please specify"
-                      className=" mt-2 border-gray-300  bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                      className=" mt-2 border-gray-300 py-2.5 bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     />
-                  )}
+                  )} */}
                 </div>
 
                 <div className="mt-5 flex gap-3 ">
@@ -480,7 +480,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                           : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Animal Type"
                     />
                     {dateSlaughteredError && (
@@ -503,8 +503,9 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         setData({ ...data, weight: e.target.value })
                       }
                       value={data.weight || ""}
-                      pattern="[0-9]*" // Only allows numbers
-                      inputMode="numeric" // Opens numeric keyboard on mobile
+                      step="0.01" // Allows decimals up to two places
+                      // pattern="[0-9]*" // Only allows numbers
+                      // inputMode="numeric" // Opens numeric keyboard on mobile
                       onKeyDown={(e) => {
                         if (
                           e.key === "-" ||
@@ -520,7 +521,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         weightError ? "border-red-500" : "border-gray-300"
                       }
     border-gray-300 
-    bg-gray-100 border w-full text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+    bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Weight"
                     />
 
@@ -544,8 +545,9 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                       onChange={(e) =>
                         setData({ ...data, pricePerKg: e.target.value })
                       }
-                      pattern="[0-9]*" // Only allows numbers
-                      inputMode="numeric" // Opens numeric keyboard on mobile
+                      step="0.01" // Allows decimals up to two places
+                      // pattern="[0-9]*" // Only allows numbers
+                      // inputMode="numeric" // Opens numeric keyboard on mobile
                       onKeyDown={(e) => {
                         if (
                           e.key === "-" ||
@@ -562,7 +564,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                           pricePerKgError ? "border-red-500" : "border-gray-300"
                         }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Price per(Kg)"
                     />
                     {pricePerKgError && (
@@ -605,7 +607,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         totalError ? "border-red-500" : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 cursor-not-allowed border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 cursor-not-allowed border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Total Price"
                     />
                     {totalError && (
@@ -625,8 +627,9 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                       onChange={(e) =>
                         setData({ ...data, paidAmount: e.target.value })
                       }
-                      pattern="[0-9]*" // Only allows numbers
-                      inputMode="numeric" // Opens numeric keyboard on mobile
+                      step="0.01" // Allows decimals up to two places
+                      // pattern="[0-9]*" // Only allows numbers
+                      // inputMode="numeric" // Opens numeric keyboard on mobile
                       onKeyDown={(e) => {
                         if (
                           e.key === "-" ||
@@ -643,7 +646,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         paidAmountError ? "border-red-500" : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full  text-gray-900 text-sm rounded-lg border-1 appearance-none py-2.5  focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Paid Amount"
                     />
                     {paidAmountError && (
@@ -684,7 +687,7 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                         balanceError ? "border-red-500" : "border-gray-300"
                       }
       border-gray-300 
-              bg-gray-100 border w-full cursor-not-allowed text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+              bg-gray-100 border w-full py-2.5 cursor-not-allowed text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
                       placeholder="Balance"
                     />
                     {balanceError && (
@@ -701,13 +704,13 @@ const EditAnimal = ({ closeModal, fetchUpdate, id }) => {
                       dispatch(clearSearch());
                     }}
                     type="button"
-                    className="bg-gray-500 hover:bg-gray-700 text-white p-2 px-8 rounded-lg "
+                    className="bg-gray-500 py-2.5 hover:bg-gray-700 text-white p-2 px-8 rounded-lg "
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-main hover:bg-main_hover text-white p-2 px-8 rounded-lg "
+                    className="bg-main py-2.5 hover:bg-main_hover text-white p-2 px-8 rounded-lg "
                   >
                     Update Animal
                   </button>

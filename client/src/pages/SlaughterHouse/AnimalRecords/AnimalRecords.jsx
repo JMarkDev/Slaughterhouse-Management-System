@@ -40,21 +40,6 @@ const AnimalRecords = () => {
     );
   }, [dispatch, animalType, startDate, endDate, user, searchTerm]);
 
-  // useEffect(() => {
-  //   if (searchTerm) {
-  //     dispatch(
-  //       searchAnimals({
-  //         name: searchTerm,
-  //         slaughterhouseId: user?.id,
-  //       })
-  //     );
-  //   } else {
-  //     dispatch(
-  //       filterAnimalsByType({ type: animalType, slaughterhouseId: user?.id })
-  //     );
-  //   }
-  // }, [dispatch, searchTerm, user, animalType]);
-
   const handleFilterByAnimal = (type) => {
     if (type === "Default" || type === "All") {
       setAnimalType("All");
@@ -114,7 +99,7 @@ const AnimalRecords = () => {
           <div className=" flex  w-full  items-center relative">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search customer..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-blue-500 focus:border-blue lg:w-[450px] rounded-xl w-full bg-gray-100 focus:outline-none focus:ring-0 focus:border-blue-600 peer"

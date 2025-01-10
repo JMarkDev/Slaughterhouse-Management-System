@@ -55,18 +55,18 @@ export default function AnimalDropdown({ handleFilter }) {
             </MenuItem>
             <MenuItem>
               <button
-                onClick={() => handleOption("Pigs")}
+                onClick={() => handleOption("Pig")}
                 className="group flex w-full hover:bg-gray-300 items-center justify-start gap-2 rounded-lg py-1.5 px-3 "
               >
-                Pigs
+                Pig
               </button>
             </MenuItem>
             <MenuItem>
               <button
-                onClick={() => handleOption("Goats")}
+                onClick={() => handleOption("Goat")}
                 className="group flex w-full hover:bg-gray-300 items-center justify-start gap-2 rounded-lg py-1.5 px-3 "
               >
-                Goats
+                Goat
               </button>
             </MenuItem>
           </MenuItems>

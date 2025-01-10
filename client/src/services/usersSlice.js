@@ -19,6 +19,8 @@ export const deleteUser = createAsyncThunk(
   "/users/deleteUser",
   async ({ id, toast }) => {
     const response = await axios.delete(`/users/delete/id/${id}`);
+    console.log(response.data);
+    console.log(id);
     if (response.data.status === "success") {
       toast.success(response.data.message);
       return id;

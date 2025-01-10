@@ -142,14 +142,6 @@ const TransactionTable = ({ animalsList, fetchUpdate }) => {
       console.error("Error:", errorLocation, error),
   });
 
-  // const handleMobilePrint = () => {
-  //   const printWindow = window.open("", "_blank");
-  //   printWindow.document.write(contentRef.current.outerHTML);
-  //   printWindow.document.close();
-  //   printWindow.focus();
-  //   printWindow.print();
-  // };
-
   const handlePrint = () => {
     // if (isMobileDevice()) {
     //   handleMobilePrint();
@@ -277,25 +269,6 @@ const TransactionTable = ({ animalsList, fetchUpdate }) => {
                             </button>
                           </>
                         )}
-
-                        {/* <button
-                          onClick={(e) => {
-                            openEditModal(id);
-                            e.stopPropagation();
-                          }}
-                          className="p-2 md:text-lg text-sm bg-[#3577c2] hover:bg-[#2d4199] text-white rounded-lg"
-                        >
-                          <FaRegEdit className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            openDeleteModal({ id, name: customerName });
-                            e.stopPropagation();
-                          }}
-                          className="p-2 md:text-lg text-sm hover:bg-red-700 bg-red-500 text-white rounded-lg"
-                        >
-                          <FaTrashAlt className="h-5 w-5" />
-                        </button> */}
                       </td>
                     ) : (
                       <td className="px-2 py-4 flex gap-3 justify-center items-center relative">
@@ -330,20 +303,6 @@ const TransactionTable = ({ animalsList, fetchUpdate }) => {
                                 </span>
                                 Download Receipt
                               </button>
-                              {/* {status !== transactionStatus.paid && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    updateTransactionStatus(id);
-                                  }}
-                                  className="w-full flex text-green-700 items-center gap-2 py-2 px-2 text-left hover:bg-gray-300 dark:hover:bg-gray-700"
-                                >
-                                  <span>
-                                    <FaCheckCircle className="h-4 w-4" />
-                                  </span>
-                                  Paid Transaction
-                                </button>
-                              )} */}
 
                               <button
                                 onClick={(e) => {

@@ -50,6 +50,7 @@ const ReportsTable = ({ animalsList }) => {
                     total,
                     transaction: { amountPaid, balance, status },
                     createdAt,
+                    slaughterDate,
                     owner: { customerName, customerPhone, customerAddress },
                   },
                   index
@@ -81,7 +82,7 @@ const ReportsTable = ({ animalsList }) => {
                       </p>
                     </td>
                     <td className="px-4 py-4 text-nowrap">
-                      {dateFormat(createdAt)}
+                      {dateFormat(slaughterDate)}
                     </td>
                   </tr>
                 )

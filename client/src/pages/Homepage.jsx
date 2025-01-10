@@ -15,7 +15,7 @@ const Homepage = () => {
         {/* Content Section */}
         <div className="absolute shadow-lg text-white top-16 md:ml-10 m-3 z-20 bg-opacity-70 md:p-8 p-4 rounded-lg backdrop-blur-sm bg-transparent">
           <h1 className="text-primary md:text-7xl text-5xl font-extrabold mt-4 tracking-wide drop-shadow-lg text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">
-            Slaughterhouse
+            Slaughter
           </h1>
 
           <h2 className="text-secondary font-extrabold md:text-5xl text-2xl mt-4 tracking-wide drop-shadow-lg text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">

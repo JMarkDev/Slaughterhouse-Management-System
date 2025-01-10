@@ -187,8 +187,8 @@ const Reports = () => {
             >
               <option value="">Filter by animal type</option>
               <option value="Cattle">Cattle</option>
-              <option value="Pigs">Pigs</option>
-              <option value="Goats">Goats</option>
+              <option value="Pig">Pig</option>
+              <option value="Goat">Goat</option>
             </select>
           </div>
         </div>

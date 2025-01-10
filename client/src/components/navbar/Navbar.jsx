@@ -124,7 +124,7 @@ const Navbar = () => {
           />
           <div className="text-white">
             <h1 className="text-lg font-semibold leading-tight bg-green-400 bg-clip-text text-transparent drop-shadow-md">
-              Slaughterhouse
+              Slaughter
             </h1>
             <h2 className="text-xs font-medium leading-tight text-gray-300 drop-shadow-sm">
               Management System

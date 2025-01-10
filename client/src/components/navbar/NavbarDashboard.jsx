@@ -36,7 +36,7 @@ const NavDashboard = ({ handleBurger }) => {
   }, [userData]);
 
   const pageTitles = {
-    "/admin-dashboard": "Admin Dashboard",
+    "/city-treasurer-dashboard": "City Treasurer Dashboard",
     "/dashboard": "Dashboard",
     "/user-management": "User Management",
     "/user-profile": "User Profile",
@@ -53,11 +53,12 @@ const NavDashboard = ({ handleBurger }) => {
     "/slaughterhouse-cattle": "Animal Records",
     "/slaughterhouse-pigs": "Animal Records",
     "/slaughterhouse-goats": "Animal Records",
-    "/slaughterhouse-reports": "Slaughterhouse Reports",
+    "/slaughterhouse-reports": "Slaughter Reports",
 
-    "/supervisor": "Supervisor List",
-    "/admin": "Admin List",
+    "/slaughterhouse-admin": "Slaughterhouse List",
+    "/city-treasurer": "City Treasurer List",
     "/user-details": "User Details",
+    "/animal-records": "Animal Records",
   };
 
   const handleNotification = () => {

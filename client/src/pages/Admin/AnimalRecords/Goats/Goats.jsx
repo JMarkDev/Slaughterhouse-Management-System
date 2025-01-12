@@ -21,7 +21,7 @@ const AnimalRecords = () => {
   useEffect(() => {
     dispatch(
       filterAllAnimals({
-        type: "Goats",
+        type: "Goat",
         startDate: "",
         endDate: "",
         slaughterhouseId: "All",
@@ -33,7 +33,7 @@ const AnimalRecords = () => {
   const fetchUpdate = () => {
     dispatch(
       filterAllAnimals({
-        type: "Goats",
+        type: "Goat",
         startDate: "",
         endDate: "",
         slaughterhouseId: "All",

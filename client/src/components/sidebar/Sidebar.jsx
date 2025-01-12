@@ -28,7 +28,11 @@ const Sidebar = ({ sidebar, handleBurger }) => {
   // const role = "faculty";
 
   const adminLinks = [
-    { title: "Dashboard", path: "/admin-dashboard", src: <RiPieChart2Fill /> },
+    {
+      title: "Dashboard",
+      path: "/city-treasurer-dashboard",
+      src: <RiPieChart2Fill />,
+    },
     {
       title: "All Transaction",
       path: "/transaction",
@@ -45,8 +49,8 @@ const Sidebar = ({ sidebar, handleBurger }) => {
       src: <HiOutlineClipboardDocumentList />,
       sublinks: [
         { title: "Cattle", path: "/cattle" },
-        { title: "Pigs", path: "/pigs" },
-        { title: "Goats", path: "/goats" },
+        { title: "Pig", path: "/pigs" },
+        { title: "Goat", path: "/goats" },
       ],
     },
     {
@@ -54,8 +58,8 @@ const Sidebar = ({ sidebar, handleBurger }) => {
       path: "/users",
       src: <FaUsers />,
       sublinks: [
-        { title: "Admin", path: "/admin" },
-        { title: "Supervisor", path: "/supervisor" },
+        { title: "City Treasurer", path: "/city-treasurer" },
+        { title: "Slaughterhouse Admin", path: "/slaughterhouse-admin" },
       ],
     },
 

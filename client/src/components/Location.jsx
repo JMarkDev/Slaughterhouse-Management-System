@@ -82,6 +82,7 @@ const LocationInput = ({
       <div className="relative">
         <input
           type="text"
+          required
           placeholder="Barangay, Purok"
           className={`w-full  ${
             customerAddressError ? "border-red-500" : "border-gray-300"

@@ -54,7 +54,7 @@ const Login = ({ modal, closeModal, openRegister }) => {
           ] = `Bearer ${accessToken}`;
           let path = "";
           if (role === rolesList.admin) {
-            path = "/admin-dashboard";
+            path = "/city-treasurer-dashboard";
           } else {
             path = "/slaughterhouse-dashboard";
           }

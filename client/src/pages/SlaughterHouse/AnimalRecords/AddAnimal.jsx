@@ -40,7 +40,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
       paidAmount: 0.0,
       balance: 0.0,
       status: null,
-      number_of_heads: 0.0,
+      no_of_heads: 0.0,
     },
   ]);
   const [data, setData] = useState({
@@ -100,7 +100,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
         balance: 0.0,
         status: null,
         // slaughterhouseId: user?.id,
-        number_of_heads: 0.0,
+        no_of_heads: 0.0,
       },
     ]);
   };
@@ -156,8 +156,6 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
     }
   }, [animals]);
 
-  console.log(animals);
-
   const handleLocationChange = (location) => {
     setLocation(location);
     setData({ ...data, customerAddress: location });
@@ -206,17 +204,16 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
     setBalanceError("");
 
     const updatedData = { ...data, animals: animals };
-    console.log(updatedData);
 
     try {
       const response = await api.post("/animals/add-animal", updatedData);
-      console.log(response.data);
+
       if (response.data.status === "success") {
         toast.success(response.data.message);
-        setId(response.data.newAnimal.id);
+        // setId(response.data.newAnimal.id);
         setShowModal(true);
         fetchUpdate();
-        closeModal();
+        closeModal(false);
         dispatch(clearSearch());
         socket.emit("add_animal", response.data);
       }
@@ -342,6 +339,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       value={data.customerName} // Set the input value to the selected customer name
                       onFocus={handleFocus} // Load search on focus
                       onBlur={handleBlur} // Close dropdown on blur
+                      required
                       onChange={(e) => {
                         setData({ ...data, customerName: e.target.value });
                         setSearchTerm(e.target.value); // Set search term to the input value
@@ -406,6 +404,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                       id="contact_number"
                       value={data.customerPhone || "09"} // Initialize with "09" if empty
                       maxLength={11}
+                      required
                       onKeyDown={(e) => {
                         // Prevent non-numeric characters and certain symbols
                         if (["-", "e", "E", "+", "."].includes(e.key)) {
@@ -450,39 +449,39 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
 
                   {animals.map((animal, index) => (
                     <div key={index} className="mt-5">
-                      <div className="mt-5">
-                        <label
-                          htmlFor="name"
-                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Animal Type
-                        </label>
-                        <select
-                          name=""
-                          id=""
-                          onChange={(e) =>
-                            handleAnimalChange(index, "type", e.target.value)
-                          }
-                          className={`border-gray-300 ${
-                            animalTypeError
-                              ? "border-red-500"
-                              : "border-gray-300"
-                          }
-              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
-                        >
-                          <option value="">Select Animal Type</option>
-                          <option value="Cattle">Cattle</option>
-                          <option value="Pig">Pig</option>
-                          <option value="Goat">Goat</option>
-                        </select>
-                        {animalTypeError && (
-                          <span className="text-red-500 text-sm">
-                            {animalTypeError}
-                          </span>
-                        )}
-                      </div>
-
                       <div className="mt-5 flex items-center gap-3">
+                        <div className=" w-1/2">
+                          <label
+                            htmlFor="name"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Animal Type
+                          </label>
+                          <select
+                            name=""
+                            id=""
+                            required
+                            onChange={(e) =>
+                              handleAnimalChange(index, "type", e.target.value)
+                            }
+                            className={`border-gray-300 ${
+                              animalTypeError
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+                          >
+                            <option value="">Select Animal Type</option>
+                            <option value="Cattle">Cattle</option>
+                            <option value="Pig">Pig</option>
+                            <option value="Goat">Goat</option>
+                          </select>
+                          {animalTypeError && (
+                            <span className="text-red-500 text-sm">
+                              {animalTypeError}
+                            </span>
+                          )}
+                        </div>
                         <div className="w-1/2">
                           <label
                             htmlFor="name"
@@ -493,6 +492,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           <select
                             name=""
                             id=""
+                            required
                             onChange={(e) =>
                               handleAnimalChange(
                                 index,
@@ -520,43 +520,48 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                             </span>
                           )}
                         </div>
+                      </div>
 
-                        <div className="w-1/2">
+                      <div className="mt-5 flex items-center gap-3">
+                        {/* <div className="w-1/2">
                           <label
-                            htmlFor="weight"
+                            htmlFor="name"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                           >
-                            Total numer of heads
+                            Animal Condition
                           </label>
-                          <input
-                            type="number"
-                            id="no_of_heads"
+                          <select
+                            name=""
+                            id=""
+                            required
                             onChange={(e) =>
                               handleAnimalChange(
                                 index,
-                                "no_of_heads",
+                                "condition",
                                 e.target.value
                               )
                             }
-                            value={data.number_of_heads}
-                            step="0.01" // Allows decimals up to two places
-                            className={`${
-                              number_of_headsError
+                            className={`border-gray-300 ${
+                              condtitionError
                                 ? "border-red-500"
                                 : "border-gray-300"
-                            } bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
-                            placeholder="Number of heads"
-                          />
-                          {number_of_headsError && (
+                            }
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+                          >
+                            <option value="">-- Choose a condition --</option>
+                            {conditions.map((condition, index) => (
+                              <option key={index} value={condition}>
+                                {condition}
+                              </option>
+                            ))}
+                          </select>
+                          {condtitionError && (
                             <span className="text-red-500 text-sm">
-                              {number_of_headsError}
+                              {condtitionError}
                             </span>
                           )}
-                        </div>
-                      </div>
-
-                      <div className="mt-5 flex gap-3 ">
-                        <div className="w-full">
+                        </div> */}
+                        <div className="w-1/2">
                           <label
                             htmlFor="name"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -566,6 +571,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           <input
                             type="date"
                             id="name"
+                            required
                             onChange={(e) =>
                               handleAnimalChange(
                                 index,
@@ -588,6 +594,76 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                             </span>
                           )}
                         </div>
+
+                        <div className="w-1/2">
+                          <label
+                            htmlFor="weight"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Total numer of heads
+                          </label>
+                          <input
+                            type="number"
+                            id="no_of_heads"
+                            required
+                            onChange={(e) =>
+                              handleAnimalChange(
+                                index,
+                                "no_of_heads",
+                                e.target.value
+                              )
+                            }
+                            value={data.no_of_heads}
+                            step="0.01" // Allows decimals up to two places
+                            className={`${
+                              number_of_headsError
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            } bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer`}
+                            placeholder="Number of heads"
+                          />
+                          {number_of_headsError && (
+                            <span className="text-red-500 text-sm">
+                              {number_of_headsError}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex gap-3 ">
+                        {/* <div className="w-full">
+                          <label
+                            htmlFor="name"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Date Slaughtered
+                          </label>
+                          <input
+                            type="date"
+                            id="name"
+                            required
+                            onChange={(e) =>
+                              handleAnimalChange(
+                                index,
+                                "slaughterDate",
+                                e.target.value
+                              )
+                            }
+                            className={`   ${
+                              dateSlaughteredError
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }
+      border-gray-300 
+              bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg border-1 appearance-none   focus:outline-none focus:ring-0 focus:border-blue-600 peer `}
+                            placeholder="Animal Type"
+                          />
+                          {dateSlaughteredError && (
+                            <span className="text-red-500 text-sm">
+                              {dateSlaughteredError}
+                            </span>
+                          )}
+                        </div> */}
                         <div className="w-full">
                           <label
                             htmlFor="weight"
@@ -598,6 +674,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           <input
                             type="number"
                             id="weight"
+                            required
                             onChange={(e) =>
                               handleAnimalChange(
                                 index,
@@ -618,6 +695,38 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                             </span>
                           )}
                         </div>
+                        <div className="w-full">
+                          <label
+                            htmlFor="category"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Category
+                          </label>
+                          <select
+                            id="category"
+                            required
+                            onChange={(e) =>
+                              handleAnimalChange(
+                                index,
+                                "category",
+                                e.target.value
+                              )
+                            }
+                            value={data.category}
+                            className={`${
+                              weightError ? "border-red-500" : "border-gray-300"
+                            } bg-gray-100 border w-full py-2.5 text-gray-900 text-sm rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-blue-600`}
+                          >
+                            <option value="">Select Category</option>
+                            <option value="livestock">Livestock</option>
+                            <option value="meat">Meat</option>
+                          </select>
+                          {weightError && (
+                            <span className="text-red-500 text-sm">
+                              {weightError}
+                            </span>
+                          )}
+                        </div>
 
                         <div className="w-full">
                           <label
@@ -629,6 +738,7 @@ const AddAnimal = ({ closeModal, fetchUpdate }) => {
                           <input
                             type="number"
                             id="name"
+                            required
                             onChange={(e) =>
                               handleAnimalChange(
                                 index,

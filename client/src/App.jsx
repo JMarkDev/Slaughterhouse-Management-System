@@ -30,7 +30,11 @@ import SlaughterDashboard from "./pages/SlaughterHouse/Dashboard/SlaughterDashbo
 
 function App() {
   const adminLinks = [
-    { title: "Dashboard", path: "/admin-dashboard", component: <Dashboard /> },
+    {
+      title: "Dashboard",
+      path: "/city-treasurer-dashboard",
+      component: <Dashboard />,
+    },
     {
       title: "Slaughterhouse",
       path: "/slaughterhouse-records",
@@ -45,10 +49,10 @@ function App() {
     { title: "Cattle", path: "/cattle", component: <Cattle /> },
     { title: "Pigs", path: "/pigs", component: <Pigs /> },
     { title: "Goats", path: "/goats", component: <Goats /> },
-    { title: "City Admin", path: "/admin", component: <CityAdmin /> },
+    { title: "City Admin", path: "/city-treasurer", component: <CityAdmin /> },
     {
       title: "Slaughterhouse User",
-      path: "/supervisor",
+      path: "/slaughterhouse-admin",
       component: <SlaughterhouseUser />,
     },
     { title: "Reports", path: "/reports", component: <Reports /> },

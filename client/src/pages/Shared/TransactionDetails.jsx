@@ -15,15 +15,25 @@ const TransactionDetails = () => {
     dispatch(fetchAnimalById(id));
   }, [dispatch, id]);
 
+  // Calculate total amount paid, balance, and other payment details
+  const totalAmountPaid = data?.receipt?.animalData?.reduce(
+    (sum, animal) => sum + parseFloat(animal.paidAmount || 0),
+    0
+  );
+  const totalBalance = data?.receipt?.animalData?.reduce(
+    (sum, animal) => sum + parseFloat(animal.balance || 0),
+    0
+  );
+
   return (
-    <div className="bg-gray-50 min-h-screen ">
+    <div className="bg-gray-50 min-h-screen">
       <div className="flex items-center gap-5 mb-8">
         <Back />
         <h1 className="font-bold lg:text-3xl text-xl text-gray-900">
           Transaction Details
         </h1>
       </div>
-      <div className="max-w-lg mx-auto p-8 border border-gray-200 shadow-xl rounded-lg bg-white">
+      <div className="text-sm max-w-lg mx-auto p-8 border border-gray-200 shadow-xl rounded-lg bg-white">
         <h2 className="lg:text-2xl text-lg font-semibold text-center text-gray-700 mb-6">
           Animal Transaction Receipt
         </h2>
@@ -55,21 +65,29 @@ const TransactionDetails = () => {
           <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-300 pb-2">
             Animal Transaction Details
           </h3>
-          <p className="text-gray-700 mb-1">
-            <strong>Animal Type:</strong> {data?.type}
-          </p>
-          <p className="text-gray-700 mb-1">
-            <strong>Date Slaughtered:</strong> {data?.slaughterDate}
-          </p>
-          <p className="text-gray-700 mb-1">
-            <strong>Total Weight:</strong> {data?.weight} Kg
-          </p>
-          <p className="text-gray-700 mb-1">
-            <strong>Price per Kg:</strong> ₱{data?.pricePerKg}
-          </p>
-          <p className="text-gray-700">
-            <strong>Total Price:</strong> ₱{data?.total}
-          </p>
+
+          {data?.receipt?.animalData?.map((animal, index) => (
+            <div key={index} className="mb-5">
+              <p className="text-gray-700 mb-1">
+                <strong>Animal Type:</strong> {animal.type}
+              </p>
+              <p className="text-gray-700 mb-1">
+                <strong>Weight:</strong> {animal.weight} Kg
+              </p>
+              <p className="text-gray-700 mb-1">
+                <strong>No. of heads:</strong> {animal.no_of_heads}
+              </p>
+              <p className="text-gray-700 mb-1">
+                <strong>Category:</strong> {animal.category}
+              </p>
+              <p className="text-gray-700 mb-1">
+                <strong>Price per Kg:</strong> ₱{animal.pricePerKg}
+              </p>
+              <p className="text-gray-700">
+                <strong>Total Price:</strong> ₱{animal.total}
+              </p>
+            </div>
+          ))}
         </div>
 
         {/* Payment Summary */}
@@ -78,16 +96,13 @@ const TransactionDetails = () => {
             Payment Summary
           </h3>
           <p className="text-gray-700 mb-1">
-            <strong>Paid Amount:</strong> ₱{data?.transaction?.amountPaid}
+            <strong>Total Paid Amount:</strong> ₱{totalAmountPaid || 0}
           </p>
           <p className="text-gray-700 mb-1">
-            <strong>Balance:</strong> ₱{data?.transaction?.balance}
+            <strong>Total Balance:</strong> ₱{totalBalance || 0}
           </p>
           <p className="text-gray-700 mb-1">
-            <strong>Status:</strong>{" "}
-            {/* <span className="font-semibold text-red-500">
-              {data?.transaction?.status}
-            </span> */}
+            <strong>Status:</strong>
             <span
               className={`${getBgColor(
                 data?.transaction?.status

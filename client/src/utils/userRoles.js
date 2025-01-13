@@ -5,10 +5,10 @@ export const getUserRole = (role) => {
 
   switch (role) {
     case rolesList.admin:
-      userRole = "Admin";
+      userRole = "City Treasurer";
       break;
     case rolesList.supervisor:
-      userRole = "Supervisor";
+      userRole = "Slaughter Admin";
       break;
 
     default:

@@ -1,5 +1,6 @@
 const { Op } = require("sequelize");
 const userModel = require("../models/userModel");
+const Animal = require("../models/animalModel");
 const { createdAt } = require("../utils/formattedTime");
 const fs = require("fs");
 const bcrypt = require("bcryptjs");
@@ -87,6 +88,12 @@ const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ Error: "User not found" });
     }
+
+    // Delete associated animals first
+    await Animal.destroy({ where: { slaughterhouseId: id } });
+
+    // Then delete the user
+    await userModel.destroy({ where: { id } });
 
     return res.status(200).json({
       status: "success",

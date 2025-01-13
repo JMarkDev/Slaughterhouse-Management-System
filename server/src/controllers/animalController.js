@@ -6,111 +6,375 @@ const transactionModel = require("../models/transactionModel");
 const { Sequelize, Op } = require("sequelize");
 const notificationModel = require("../models/notificationModel");
 const userModel = require("../models/userModel");
+const receiptModel = require("../models/receiptModel");
 const rolesList = require("../constants/rolesList");
 const statusList = require("../constants/statusList");
+
+// const addAnimal = async (req, res) => {
+//   const {
+//     customerName,
+//     customerPhone,
+//     customerAddress,
+//     type,
+//     condition,
+//     weight,
+//     pricePerKg,
+//     total,
+//     paidAmount,
+//     balance,
+//     status,
+//     slaughterDate,
+//     slaughterhouseId,
+//   } = req.body;
+
+//   try {
+//       // Validate the incoming animals array
+//       if (!Array.isArray(animals) || animals.length === 0) {
+//         return res.status(400).json({ message: "Animals data is required." });
+//       }
+
+//       const createdAt = new Date();
+//       const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss", true); // true for UTC time
+
+//     // Format numeric fields to two decimal places
+//     const formattedPricePerKg = parseFloat(pricePerKg).toFixed(2);
+//     const formattedTotal = parseFloat(total).toFixed(2);
+//     const formattedPaidAmount = parseFloat(paidAmount).toFixed(2);
+//     const formattedBalance = parseFloat(balance).toFixed(2);
+
+//     const year = new Date().getFullYear().toString().slice(-2); // Last two digits of the year
+//     const chars =
+//       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//     let transaction = "";
+
+//     // Generate an 8-character random string
+//     for (let i = 8; i > 0; --i) {
+//       transaction += chars[Math.floor(Math.random() * chars.length)];
+//     }
+
+//     // Add the last two digits of the year and a 2-digit timestamp for uniqueness
+//     const timestamp = Date.now().toString().slice(-2); // Last two digits of the milliseconds
+
+//     transaction = `${transaction}${timestamp}${year}`; // Total 12 characters
+
+//     const newTransaction = await transactionModel.create({
+//       id: transaction,
+//       transactionId: transaction,
+//       amountPaid: formattedPaidAmount,
+//       balance: formattedBalance,
+//       status: status,
+//       createdAt: sequelize.literal(`'${formattedDate}'`),
+//     });
+
+//     const newAnimal = await animalModel.create({
+//       id: transaction,
+//       type: type,
+//       condition: condition,
+//       weight: weight,
+//       pricePerKg: formattedPricePerKg,
+//       total: formattedTotal,
+//       slaughterDate: slaughterDate,
+//       slaughterhouseId: slaughterhouseId,
+//       transactionId: transaction,
+//       createdAt: sequelize.literal(`'${formattedDate}'`),
+//     });
+
+//     const newOwner = await ownerModel.create({
+//       id: newAnimal.id,
+//       customerName,
+//       customerPhone,
+//       customerAddress,
+//       animalId: newAnimal.id,
+//       createdAt: sequelize.literal(`'${formattedDate}'`),
+//     });
+
+//     const admin = await userModel.findAll({
+//       where: {
+//         role: rolesList.admin,
+//         status: statusList.verified,
+//       },
+//     });
+
+//     await Promise.all(
+//       admin.map(async (user) => {
+//         await notificationModel.create({
+//           transactionId: newTransaction.id,
+//           user_id: user.id,
+//           ownerName: customerName,
+//           message: `New transaction added with transaction ID: ${newTransaction.id}`,
+//           is_read: 0,
+//           createdAt: sequelize.literal(`'${formattedDate}'`),
+//         });
+//       })
+//     );
+
+//     return res.status(201).json({
+//       newAnimal,
+//       newTransaction,
+//       newOwner,
+//       status: "success",
+//       message: "Added successfully",
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
+// const addAnimal = async (req, res) => {
+//   const {
+//     customerName,
+//     customerPhone,
+//     customerAddress,
+//     slaughterhouseId,
+//     animals, // Expecting this as an array from the frontend
+//   } = req.body;
+
+//   try {
+//     // Validate the incoming animals array
+//     if (!Array.isArray(animals) || animals.length === 0) {
+//       return res
+//         .status(400)
+//         .json({ message: "Animals data is required and must be an array." });
+//     }
+
+//     const createdAt = new Date();
+//     const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss", true); // UTC format
+
+//     const transactionPromises = animals.map(async (animal) => {
+//       // Generate a unique transaction ID for each animal
+//       const year = new Date().getFullYear().toString().slice(-2); // Last two digits of the year
+//       const chars =
+//         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//       const timestamp = Date.now().toString().slice(-2); // Last two digits of milliseconds
+//       let transaction = Array(8)
+//         .fill(null)
+//         .map(() => chars[Math.floor(Math.random() * chars.length)])
+//         .join("");
+//       transaction = `${transaction}${timestamp}${year}`; // 12-character unique ID
+
+//       // Format numeric fields
+//       const {
+//         type,
+//         condition,
+//         slaughterDate,
+//         weight,
+//         pricePerKg,
+//         total,
+//         paidAmount,
+//         balance,
+//         status,
+//       } = animal;
+
+//       const formattedPricePerKg = parseFloat(pricePerKg).toFixed(2);
+//       const formattedTotal = parseFloat(total).toFixed(2);
+//       const formattedPaidAmount = parseFloat(paidAmount || 0).toFixed(2);
+//       const formattedBalance = parseFloat(balance || 0).toFixed(2);
+
+//       // Create the transaction entry in the database
+//       const newTransaction = await transactionModel.create({
+//         id: transaction,
+//         transactionId: transaction,
+//         amountPaid: formattedPaidAmount,
+//         balance: formattedBalance,
+//         status: status || 1, // Default status
+//         createdAt: sequelize.literal(`'${formattedDate}'`),
+//       });
+
+//       // Create the animal entry and associate it with the transaction
+//       const newAnimal = await animalModel.create({
+//         id: `${transaction}_${Math.random().toString(36).substring(7)}`, // Unique ID
+//         type,
+//         condition,
+//         weight,
+//         pricePerKg: formattedPricePerKg,
+//         total: formattedTotal,
+//         slaughterDate,
+//         slaughterhouseId,
+//         transactionId: transaction, // Associate with transaction ID
+//         createdAt: sequelize.literal(`'${formattedDate}'`),
+//       });
+
+//       // Create the owner entry and link it to the transaction
+//       const newOwner = await ownerModel.create({
+//         id: transaction, // Use transaction ID for owner ID
+//         customerName,
+//         customerPhone,
+//         customerAddress,
+//         animalId: newAnimal.id, // Link to the current animal
+//         createdAt: sequelize.literal(`'${formattedDate}'`),
+//       });
+
+//       // Notify all admins
+//       const adminUsers = await userModel.findAll({
+//         where: {
+//           role: rolesList.admin,
+//           status: statusList.verified,
+//         },
+//       });
+
+//       const notificationPromises = adminUsers.map(async (admin) => {
+//         await notificationModel.create({
+//           transactionId: transaction,
+//           user_id: admin.id,
+//           ownerName: customerName,
+//           message: `New transaction added with transaction ID: ${transaction}`,
+//           is_read: 0,
+//           createdAt: sequelize.literal(`'${formattedDate}'`),
+//         });
+//       });
+
+//       await Promise.all(notificationPromises);
+
+//       return { newTransaction, newAnimal, newOwner };
+//     });
+
+//     const results = await Promise.all(transactionPromises);
+
+//     return res.status(201).json({
+//       transactions: results,
+//       status: "success",
+//       message: "Transactions and animals added successfully.",
+//     });
+//   } catch (error) {
+//     console.error("Error in addAnimal:", error.message);
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
 
 const addAnimal = async (req, res) => {
   const {
     customerName,
     customerPhone,
     customerAddress,
-    type,
-    condition,
-    weight,
-    pricePerKg,
-    total,
-    paidAmount,
-    balance,
-    status,
-    slaughterDate,
     slaughterhouseId,
+    animals, // Expecting this as an array from the frontend
   } = req.body;
 
   try {
-    // Format numeric fields to two decimal places
-    const formattedPricePerKg = parseFloat(pricePerKg).toFixed(2);
-    const formattedTotal = parseFloat(total).toFixed(2);
-    const formattedPaidAmount = parseFloat(paidAmount).toFixed(2);
-    const formattedBalance = parseFloat(balance).toFixed(2);
-
-    const createdAt = new Date();
-    const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss", true); // true for UTC time
-
-    const year = new Date().getFullYear().toString().slice(-2); // Last two digits of the year
-    const chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let transaction = "";
-
-    // Generate an 8-character random string
-    for (let i = 8; i > 0; --i) {
-      transaction += chars[Math.floor(Math.random() * chars.length)];
+    // Validate the incoming animals array
+    if (!Array.isArray(animals) || animals.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Animals data is required and must be an array." });
     }
 
-    // Add the last two digits of the year and a 2-digit timestamp for uniqueness
-    const timestamp = Date.now().toString().slice(-2); // Last two digits of the milliseconds
+    const createdAt = new Date();
+    const formattedDate = date.format(createdAt, "YYYY-MM-DD HH:mm:ss", true); // UTC format
 
-    transaction = `${transaction}${timestamp}${year}`; // Total 12 characters
-
-    const newTransaction = await transactionModel.create({
-      id: transaction,
-      transactionId: transaction,
-      amountPaid: formattedPaidAmount,
-      balance: formattedBalance,
-      status: status,
+    // Create a receipt
+    const receiptId = `${slaughterhouseId}_${Math.random()
+      .toString(36)
+      .substring(7)}`;
+    const newReceipt = await receiptModel.create({
+      id: receiptId,
+      animalData: animals,
       createdAt: sequelize.literal(`'${formattedDate}'`),
     });
 
-    const newAnimal = await animalModel.create({
-      id: transaction,
-      type: type,
-      condition: condition,
-      weight: weight,
-      pricePerKg: formattedPricePerKg,
-      total: formattedTotal,
-      slaughterDate: slaughterDate,
-      slaughterhouseId: slaughterhouseId,
-      transactionId: transaction,
-      createdAt: sequelize.literal(`'${formattedDate}'`),
-    });
+    const transactionPromises = animals.map(async (animal) => {
+      // Generate a unique transaction ID for each animal
+      const year = new Date().getFullYear().toString().slice(-2); // Last two digits of the year
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const timestamp = Date.now().toString().slice(-2); // Last two digits of milliseconds
+      let transaction = Array(8)
+        .fill(null)
+        .map(() => chars[Math.floor(Math.random() * chars.length)])
+        .join("");
+      transaction = `${transaction}${timestamp}${year}`; // 12-character unique ID
 
-    const newOwner = await ownerModel.create({
-      id: newAnimal.id,
-      customerName,
-      customerPhone,
-      customerAddress,
-      animalId: newAnimal.id,
-      createdAt: sequelize.literal(`'${formattedDate}'`),
-    });
+      // Format numeric fields
+      const {
+        type,
+        condition,
+        slaughterDate,
+        weight,
+        no_of_heads,
+        pricePerKg,
+        total,
+        paidAmount,
+        balance,
+        status,
+        category,
+      } = animal;
 
-    const admin = await userModel.findAll({
-      where: {
-        role: rolesList.admin,
-        status: statusList.verified,
-      },
-    });
+      const formattedPricePerKg = parseFloat(pricePerKg).toFixed(2);
+      const formattedTotal = parseFloat(total).toFixed(2);
+      const formattedPaidAmount = parseFloat(paidAmount || 0).toFixed(2);
+      const formattedBalance = parseFloat(balance || 0).toFixed(2);
 
-    await Promise.all(
-      admin.map(async (user) => {
+      // Create the transaction entry in the database
+      const newTransaction = await transactionModel.create({
+        id: transaction,
+        transactionId: transaction,
+        amountPaid: formattedPaidAmount,
+        balance: formattedBalance,
+        status: status || 1, // Default status
+        createdAt: sequelize.literal(`'${formattedDate}'`),
+      });
+
+      // Create the animal entry and associate it with the receipt and transaction
+      const newAnimal = await animalModel.create({
+        id: transaction,
+        type,
+        condition,
+        noOfHeads: no_of_heads,
+        weight,
+        pricePerKg: formattedPricePerKg,
+        total: formattedTotal,
+        slaughterDate,
+        slaughterhouseId,
+        transactionId: transaction, // Associate with transaction ID
+        receiptId, // Associate with receipt ID
+        category,
+        createdAt: sequelize.literal(`'${formattedDate}'`),
+      });
+
+      // Create the owner entry and link it to the transaction
+      const newOwner = await ownerModel.create({
+        id: transaction, // Use transaction ID for owner ID
+        customerName,
+        customerPhone,
+        customerAddress,
+        animalId: newAnimal.id, // Link to the current animal
+        createdAt: sequelize.literal(`'${formattedDate}'`),
+      });
+
+      // Notify all admins
+      const adminUsers = await userModel.findAll({
+        where: {
+          role: rolesList.admin,
+          status: statusList.verified,
+        },
+      });
+
+      const notificationPromises = adminUsers.map(async (admin) => {
         await notificationModel.create({
-          transactionId: newTransaction.id,
-          user_id: user.id,
+          transactionId: transaction,
+          user_id: admin.id,
           ownerName: customerName,
-          message: `New transaction added with transaction ID: ${newTransaction.id}`,
+          message: `New transaction added with transaction ID: ${transaction}`,
           is_read: 0,
           createdAt: sequelize.literal(`'${formattedDate}'`),
         });
-      })
-    );
+      });
+
+      await Promise.all(notificationPromises);
+
+      return { newTransaction, newAnimal, newOwner };
+    });
+
+    const results = await Promise.all(transactionPromises);
 
     return res.status(201).json({
-      newAnimal,
-      newTransaction,
-      newOwner,
+      transactions: results,
+      receipt: newReceipt,
       status: "success",
-      message: "Added successfully",
+      message: "Transactions, animals, and receipt added successfully.",
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error in addAnimal:", error.message);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -126,6 +390,10 @@ const fetchAllAnimals = async (req, res) => {
           },
           {
             model: transactionModel,
+            required: true,
+          },
+          {
+            model: receiptModel,
             required: true,
           },
         ],
@@ -152,6 +420,10 @@ const getAnimalById = async (req, res) => {
         },
         {
           model: transactionModel,
+          required: true,
+        },
+        {
+          model: receiptModel,
           required: true,
         },
       ],
@@ -530,9 +802,13 @@ const filterAllAnimals = async (req, res) => {
     whereConditions.type = type;
   }
 
+  // Normalize startDate and endDate to include the entire range
   if (startDate && endDate) {
     whereConditions.createdAt = {
-      [Sequelize.Op.between]: [startDate, endDate],
+      [Sequelize.Op.between]: [
+        new Date(`${startDate}T00:00:00.000Z`), // Start of the day
+        new Date(`${endDate}T23:59:59.999Z`), // End of the day
+      ],
     };
   }
 

@@ -83,7 +83,7 @@ const handleRegister = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ Error: "Register error in server" });
+    return res.status(500).json({ message: error.message });
   }
 };
 

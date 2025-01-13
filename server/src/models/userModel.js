@@ -69,7 +69,7 @@ const User = sequelize.define(
   }
 );
 
-User.hasMany(Animal, { foreignKey: "slaughterhouseId" });
-Animal.belongsTo(User, { foreignKey: "slaughterhouseId" });
+User.hasMany(Animal, { foreignKey: "slaughterhouseId", onDelete: "CASCADE" });
+Animal.belongsTo(User, { foreignKey: "slaughterhouseId", onDelete: "CASCADE" });
 
 module.exports = User;

@@ -8,8 +8,8 @@ const {
 
 router.post(
   "/add-animal",
-  addAnimalValidation(),
-  validateForm,
+  // addAnimalValidation(),
+  // validateForm,
   animalController.addAnimal
 );
 router.get("/filter-all-animals", animalController.filterAllAnimals);

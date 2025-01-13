@@ -2,6 +2,7 @@ const sequelize = require("../config/database");
 const { DataTypes } = require("sequelize");
 const Transaction = require("./transactionModel");
 const Owner = require("./ownerModel");
+const Receipt = require("./receiptModel");
 
 const Animal = sequelize.define(
   "animals",
@@ -17,6 +18,14 @@ const Animal = sequelize.define(
     },
     condition: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    noOfHeads: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     weight: {
@@ -58,16 +67,40 @@ const Animal = sequelize.define(
         key: "id",
       },
     },
+    receiptId: {
+      type: DataTypes.STRING(55),
+      allowNull: true,
+      references: {
+        model: "receipts",
+        key: "id",
+      },
+    },
   },
   {
     timestamps: false,
   }
 );
 
-Animal.hasOne(Transaction, { foreignKey: "id", onDelete: "CASCADE" });
-Transaction.belongsTo(Animal, { foreignKey: "id", onDelete: "CASCADE" });
+Animal.belongsTo(Transaction, {
+  foreignKey: "transactionId",
+  onDelete: "CASCADE",
+});
+Transaction.hasMany(Animal, {
+  foreignKey: "transactionId",
+  onDelete: "CASCADE",
+});
 
 Animal.hasOne(Owner, { foreignKey: "animalId", onDelete: "CASCADE" });
 Owner.belongsTo(Animal, { foreignKey: "animalId", onDelete: "CASCADE" });
+
+// Animal Model
+Animal.belongsTo(Receipt, {
+  foreignKey: "receiptId",
+  onDelete: "CASCADE",
+});
+Receipt.hasMany(Animal, {
+  foreignKey: "receiptId",
+  onDelete: "CASCADE",
+});
 
 module.exports = Animal;

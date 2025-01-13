@@ -2,7 +2,7 @@ import Back from "../../components/buttons/Back";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAnimalById, getAnimalById } from "../../services/animalsSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getBgColor } from "../../utils/animalBgStatus";
 import { getTransactionStatus } from "../../utils/getTransactionStatus";
 
@@ -10,20 +10,43 @@ const TransactionDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const data = useSelector(getAnimalById);
+  const [animalData, setAnimalData] = useState([]);
 
   useEffect(() => {
     dispatch(fetchAnimalById(id));
   }, [dispatch, id]);
 
+  useEffect(() => {
+    if (data?.receipt?.animalData) {
+      try {
+        const parsedData = JSON.parse(data.receipt.animalData);
+        if (Array.isArray(parsedData)) {
+          setAnimalData(parsedData);
+        } else {
+          console.error("Parsed data is not an array:", parsedData);
+          setAnimalData([]);
+        }
+      } catch (error) {
+        console.error("Failed to parse animalData:", error);
+        setAnimalData([]); // Default to empty array on failure
+      }
+    }
+  }, [data]);
+
   // Calculate total amount paid, balance, and other payment details
-  const totalAmountPaid = data?.receipt?.animalData?.reduce(
-    (sum, animal) => sum + parseFloat(animal.paidAmount || 0),
-    0
-  );
-  const totalBalance = data?.receipt?.animalData?.reduce(
-    (sum, animal) => sum + parseFloat(animal.balance || 0),
-    0
-  );
+  const totalAmountPaid = Array.isArray(animalData)
+    ? animalData.reduce(
+        (sum, animal) => sum + parseFloat(animal.paidAmount || 0),
+        0
+      )
+    : 0;
+
+  const totalBalance = Array.isArray(animalData)
+    ? animalData.reduce(
+        (sum, animal) => sum + parseFloat(animal.balance || 0),
+        0
+      )
+    : 0;
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -66,16 +89,20 @@ const TransactionDetails = () => {
             Animal Transaction Details
           </h3>
 
-          {data?.receipt?.animalData?.map((animal, index) => (
+          {animalData.map((animal, index) => (
             <div key={index} className="mb-5">
               <p className="text-gray-700 mb-1">
                 <strong>Animal Type:</strong> {animal.type}
               </p>
               <p className="text-gray-700 mb-1">
+                <strong>Slaughter Date:</strong> {animal.slaughterDate}
+              </p>
+
+              <p className="text-gray-700 mb-1">
                 <strong>Weight:</strong> {animal.weight} Kg
               </p>
               <p className="text-gray-700 mb-1">
-                <strong>No. of heads:</strong> {animal.no_of_heads}
+                <strong>No. of Heads:</strong> {animal.no_of_heads}
               </p>
               <p className="text-gray-700 mb-1">
                 <strong>Category:</strong> {animal.category}
@@ -106,7 +133,7 @@ const TransactionDetails = () => {
             <span
               className={`${getBgColor(
                 data?.transaction?.status
-              )} text-white w-fit px-4 py-1 rounded-lg text-center `}
+              )} text-white w-fit px-4 py-1 rounded-lg text-center`}
             >
               {getTransactionStatus(data?.transaction?.status)}
             </span>

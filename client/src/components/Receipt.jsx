@@ -93,18 +93,43 @@
 
 // export default Receipt;
 import PropTypes from "prop-types";
+import { useState, useEffect } from "react";
 import { getTransactionStatus } from "../utils/getTransactionStatus";
 
 const Receipt = ({ data, contentRef }) => {
+  const [animalData, setAnimalData] = useState([]);
+
+  useEffect(() => {
+    if (data?.receipt?.animalData) {
+      try {
+        const parsedData = JSON.parse(data.receipt.animalData);
+        if (Array.isArray(parsedData)) {
+          setAnimalData(parsedData);
+        } else {
+          console.error("Parsed data is not an array:", parsedData);
+          setAnimalData([]);
+        }
+      } catch (error) {
+        console.error("Failed to parse animalData:", error);
+        setAnimalData([]); // Default to empty array on failure
+      }
+    }
+  }, [data]);
+
   // Calculate total amount paid, balance, and other payment details
-  const totalAmountPaid = data?.receipt?.animalData?.reduce(
-    (sum, animal) => sum + parseFloat(animal.paidAmount || 0),
-    0
-  );
-  const totalBalance = data?.receipt?.animalData?.reduce(
-    (sum, animal) => sum + parseFloat(animal.balance || 0),
-    0
-  );
+  const totalAmountPaid = Array.isArray(animalData)
+    ? animalData.reduce(
+        (sum, animal) => sum + parseFloat(animal.paidAmount || 0),
+        0
+      )
+    : 0;
+
+  const totalBalance = Array.isArray(animalData)
+    ? animalData.reduce(
+        (sum, animal) => sum + parseFloat(animal.balance || 0),
+        0
+      )
+    : 0;
 
   return (
     <div
@@ -142,7 +167,7 @@ const Receipt = ({ data, contentRef }) => {
         <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-3">
           Animal Transaction Details
         </h3>
-        {data?.receipt?.animalData?.map((animal, index) => (
+        {animalData?.map((animal, index) => (
           <div key={index} className="mb-5">
             <p className="text-gray-600 text-sm mb-1">
               <strong>Animal Type:</strong> {animal.type}

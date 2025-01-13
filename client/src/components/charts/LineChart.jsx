@@ -84,17 +84,17 @@ export default function App({ data }) {
   // Safely transform data for the chart
   const transformedData = Array.isArray(data)
     ? data.reduce((acc, item) => {
-        const { slaughterDate, noOfHeads = 0, type } = item; // Use correct key
+        const { slaughterDate, noOfHeads = 0, type } = item; // Default to 0 if noOfHeads is undefined
 
         // Check if a record for the current date already exists
         const existingRecord = acc.find(
           (record) => record.date === slaughterDate
         );
         if (existingRecord) {
-          // Update the existing record
+          // Update the existing record, adding noOfHeads even if it's 0
           existingRecord[type] = (existingRecord[type] || 0) + noOfHeads;
         } else {
-          // Create a new record
+          // Create a new record with the current type and noOfHeads (even if 0)
           acc.push({
             date: slaughterDate || "Unknown Date", // Use slaughterDate or fallback
             [type]: noOfHeads, // Dynamically set the animal type key
@@ -104,11 +104,47 @@ export default function App({ data }) {
       }, [])
     : [];
 
+  // Optionally, filter out data with all zeros if needed:
+  const filteredData = transformedData.filter((item) =>
+    Object.values(item).some((value) => value !== 0)
+  );
+
+  // Sort data chronologically by date
+  const finalData = transformedData
+    .map((item) => ({
+      ...item,
+      date: new Date(item.date), // Convert date string to Date object
+    }))
+    .sort((a, b) => a.date - b.date) // Sort the dates in ascending order
+    .map((item) => ({
+      ...item,
+      date: item.date.toISOString().split("T")[0], // Convert back to string for chart display
+    }));
+
+  // Find all unique animal types across the entire data set
+  const allAnimalTypes = [
+    ...new Set(
+      data.reduce((acc, item) => {
+        if (item.type) acc.push(item.type);
+        return acc;
+      }, [])
+    ),
+  ];
+
+  // Ensure that every date has all animal types, even with 0 values
+  finalData.forEach((item) => {
+    allAnimalTypes.forEach((type) => {
+      if (!item[type]) {
+        item[type] = 0; // Add the missing type with a value of 0
+      }
+    });
+  });
+
   return (
     <div className="overflow-x-auto shadow-xl">
       <div style={{ minWidth: "800px" }}>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart width={800} height={400} data={transformedData}>
+          <LineChart width={800} height={400} data={finalData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" padding={{ left: 30, right: 30 }} />
             <YAxis
@@ -122,17 +158,15 @@ export default function App({ data }) {
             <Legend />
 
             {/* Dynamically create lines for each animal type */}
-            {Object.keys(transformedData[0] || {}).map((key) =>
-              key !== "date" ? (
-                <Line
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  stroke={getRandomColor(key)} // Assign a unique color for each type
-                  name={key} // Use the animal type as the name
-                />
-              ) : null
-            )}
+            {allAnimalTypes.map((key) => (
+              <Line
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stroke={getRandomColor(key)} // Assign a unique color for each type
+                name={key} // Use the animal type as the name
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </div>
